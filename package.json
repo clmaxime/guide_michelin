@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "slice:assets": "node scripts/slice-assets.mjs"
+    "slice:assets": "node scripts/slice-assets.mjs",
+    "slice:tinder": "node scripts/slice-tinder-assets.mjs"
   },
   "keywords": [],
   "author": "",

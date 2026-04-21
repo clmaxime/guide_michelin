@@ -10,7 +10,7 @@ function DiscoverPage() {
         <DishCard />
         <SwipePlaceholder />
         <Link className={buttonVariants({ className: "w-fit", variant: "link" })} to="/">
-          Retour a l'accueil
+          Retour à l'accueil
         </Link>
       </div>
     </main>

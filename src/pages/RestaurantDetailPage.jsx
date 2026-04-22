@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Clock, Star, ChevronRight, ExternalLink } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, ChevronRight, ExternalLink } from "lucide-react";
+import { MichelinStars, MICHELIN_LABELS } from "@/components/MichelinStars";
 import { restaurantApi } from "@/lib/api";
 import { MAPBOX_ACCESS_TOKEN } from "@/lib/mapbox";
 import { useUiStore } from "@/store/ui-store";
@@ -12,17 +13,7 @@ const DAY_LABELS = {
   JEUDI: "Jeudi", VENDREDI: "Vendredi", SAMEDI: "Samedi", DIMANCHE: "Dimanche",
 };
 
-const STAR_LABELS = { 1: "Une étoile Michelin", 2: "Deux étoiles Michelin", 3: "Trois étoiles Michelin" };
 
-function MichelinStars({ count }) {
-  return (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} className="size-5 fill-primary text-primary drop-shadow-md" />
-      ))}
-    </div>
-  );
-}
 
 function GlassCard({ className = "", children }) {
   return (
@@ -119,8 +110,8 @@ function InfoCard({ restaurant }) {
             Distinction
           </p>
           <div className="flex items-center gap-2">
-            <MichelinStars count={restaurant.distinction} />
-            <span className="text-sm text-white/70">{STAR_LABELS[restaurant.distinction]}</span>
+            <MichelinStars count={restaurant.distinction} size="lg" />
+            <span className="text-sm text-white/70">{MICHELIN_LABELS[restaurant.distinction]}</span>
           </div>
         </div>
       </div>
@@ -264,9 +255,9 @@ function RestaurantDetailPage() {
         {/* hero content — bottom */}
         <div className="absolute bottom-0 left-0 right-0 z-10">
           <div className="mx-auto max-w-[1220px] px-6 pb-14 md:px-10">
-            <MichelinStars count={restaurant.distinction} />
+            <MichelinStars count={restaurant.distinction} size="lg" />
             <p className="mt-2 text-sm font-semibold uppercase tracking-[0.25em] text-primary/80">
-              {STAR_LABELS[restaurant.distinction]}
+              {MICHELIN_LABELS[restaurant.distinction]}
             </p>
             <h1 className="font-title mt-3 text-5xl font-semibold text-white md:text-7xl leading-none">
               {restaurant.nom}

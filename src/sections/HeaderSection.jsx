@@ -32,10 +32,10 @@ function HeaderSection() {
             {headerLinks.map((item) => (
               <a
                 className={`text-[0.95rem] font-semibold ${textColor}`}
-                href={`/#${item.toLowerCase()}`}
-                key={item}
+                href={item.href}
+                key={item.label}
               >
-                {item}
+                {item.label}
               </a>
             ))}
           </nav>

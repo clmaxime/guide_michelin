@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Locate, MapPin, Search, Star, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Locate, MapPin, Search, X } from "lucide-react";
+import { MichelinStars } from "@/components/MichelinStars";
+import michelinStarUrl from "@/assets/michelin-star.svg";
 import { restaurantApi } from "@/lib/api";
 import { useUiStore } from "@/store/ui-store";
 import HeaderSection from "@/sections/HeaderSection";
@@ -10,16 +12,6 @@ import HeaderSection from "@/sections/HeaderSection";
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
 const RANGES = [5, 10, 20, 50];
 
-function MichelinStars({ count, size = "sm" }) {
-  const cls = size === "sm" ? "size-3" : "size-3.5";
-  return (
-    <span className="flex items-center gap-0.5">
-      {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} className={`${cls} fill-primary text-primary`} />
-      ))}
-    </span>
-  );
-}
 
 /* ── filter bar ──────────────────────────────────────── */
 
@@ -104,7 +96,7 @@ function FilterBar({ filters, onChange }) {
                     : "bg-white/10 border-white/15 text-white/70 hover:bg-white/15"
                 }`}
               >
-                {n}<Star className="size-3 fill-current" />
+                {n}<img src={michelinStarUrl} alt="★" width={11} height={11} className="opacity-90" />
               </button>
             ))}
           </div>

@@ -217,7 +217,7 @@ function HeroSection() {
             <Search className="size-4" />
             Rechercher
           </Button>
-          <div className="flex items-center gap-3 rounded-xl bg-black/20 px-4 py-2.5 md:col-span-2">
+          <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 backdrop-blur-sm md:col-span-2">
             <span className="shrink-0 text-[0.68rem] font-semibold uppercase tracking-[0.07em] text-white/80">
               Écart max au trajet
             </span>

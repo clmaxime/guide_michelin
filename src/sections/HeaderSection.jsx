@@ -7,6 +7,12 @@ import { useAuthStore } from "@/store/auth-store";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { UserMenu } from "@/components/auth/UserMenu";
 
+const navLinks = [
+  { label: "Restaurants", href: "/restaurants" },
+  { label: "Hôtels", href: "/hotels" },
+  { label: "Itinéraire", href: "/itinerary" },
+];
+
 function HeaderSection() {
   const scrolled = useUiStore((state) => state.scrolled);
   const user = useAuthStore((s) => s.user);
@@ -38,7 +44,8 @@ function HeaderSection() {
           <nav aria-label="Navigation principale" className="hidden gap-5 md:flex">
             {navLinks.map((item) => (
               <Link
-                className={`text-[0.95rem] font-semibold ${textColor} transition-opacity hover:opacity-80`}
+                className={`text-[0.95rem] font-semibold ${textColor}`}
+                to={item.href}
                 key={item.label}
                 to={item.to}
               >

@@ -1,9 +1,9 @@
 ﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Heart, Locate, MapPin, Search, Star, X } from "lucide-react";
-import { favoritesApi, restaurantApi } from "@/lib/api";
-import { useAuthStore } from "@/store/auth-store";
-import { useUiStore } from "@/store/ui-store";
+import { MichelinStars } from "@/components/MichelinStars";
+import michelinStarUrl from "@/assets/michelin-star.svg";
+import { restaurantApi } from "@/lib/api";
 import HeaderSection from "@/sections/HeaderSection";
 
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
@@ -208,7 +208,7 @@ function RestaurantCard({ restaurant, isFavorite, onToggleFavorite }) {
         </div>
         {todayHoraire?.creneaux?.length > 0 ? (
           <p className="text-xs font-medium text-emerald-400">
-            Ouvert · {todayHoraire.creneaux[0].ouverture}-{todayHoraire.creneaux[0].fermeture}
+            Ouvert · {todayHoraire.creneaux[0].ouverture}–{todayHoraire.creneaux[0].fermeture}
           </p>
         ) : (
           <p className="text-xs text-white/30">Horaires non renseignés</p>
@@ -333,7 +333,7 @@ export default function RestaurantsPage() {
           {!loading ? (
             <p className="mb-6 text-xs text-white/30">
               {restaurants.length === 0 ? "Aucun résultat" : `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""}`}
-              {filters.lat != null ? ` · dans un rayon de ${filters.range} km` : ""}
+              {filters.lat != null && ` · dans un rayon de ${filters.range} km`}
             </p>
           ) : null}
 

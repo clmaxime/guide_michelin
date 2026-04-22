@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useUiStore } from "@/store/ui-store";
@@ -9,14 +9,14 @@ import { UserMenu } from "@/components/auth/UserMenu";
 
 function HeaderSection() {
   const scrolled = useUiStore((state) => state.scrolled);
+  const setScrolled = useUiStore((state) => state.setScrolled);
   const user = useAuthStore((s) => s.user);
   const [showAuth, setShowAuth] = useState(false);
-  const navLinks = [
-    { label: "Restaurants", to: "/restaurants" },
-    { label: "Hôtels", to: "/hotels" },
-    { label: "Inspiration", to: "/discover" },
-    { label: "Destinations", to: "/" },
-  ];
+  const location = useLocation();
+
+  useEffect(() => {
+    setScrolled(false);
+  }, [location.pathname]);
 
   const textColor = scrolled ? "text-foreground" : "text-white";
 
@@ -36,11 +36,11 @@ function HeaderSection() {
             {navLinks.map((item) => (
               <Link
                 className={`text-[0.95rem] font-semibold ${textColor}`}
+                href={item.href}
                 key={item.label}
-                to={item.to}
               >
                 {item.label}
-              </Link>
+              </a>
             ))}
           </nav>
 

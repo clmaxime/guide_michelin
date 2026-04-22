@@ -1,30 +1,28 @@
 import { Button } from "@/components/ui/button";
-import { useDishTinderStore } from "./store/dish-tinder-store";
 
-function SwipePlaceholder() {
-  const swipeDirection = useDishTinderStore((state) => state.swipeDirection);
-  const setSwipeDirection = useDishTinderStore((state) => state.setSwipeDirection);
-
+function SwipePlaceholder({ disabled, onSwipeLeft, onSwipeRight, lastSwipe }) {
   return (
-    <div className="grid w-full max-w-[30rem] grid-cols-2 gap-3" role="presentation">
+    <div className="grid w-full grid-cols-2 gap-3" role="presentation">
       <Button
-        className="h-auto rounded-xl border border-dashed border-[#c8c8c8] bg-gradient-to-br from-[#f5f5f5] to-white p-4 text-center font-semibold text-[#595959] hover:bg-[#f5f5f5]"
-        onClick={() => setSwipeDirection("left")}
+        className="h-12 rounded-xl border border-[#f87d91]/35 bg-[#261217] text-sm font-semibold text-[#ffd0d8] hover:bg-[#311820]"
+        disabled={disabled}
+        onClick={onSwipeLeft}
         type="button"
-        variant="outline"
       >
-        Swipe left
+        Swipe gauche
       </Button>
       <Button
-        className="h-auto rounded-xl border border-dashed border-[#c8c8c8] bg-gradient-to-br from-[#f5f5f5] to-white p-4 text-center font-semibold text-[#595959] hover:bg-[#f5f5f5]"
-        onClick={() => setSwipeDirection("right")}
+        className="h-12 rounded-xl border border-[#7ed1a2]/35 bg-[#0f2218] text-sm font-semibold text-[#cdf4de] hover:bg-[#143022]"
+        disabled={disabled}
+        onClick={onSwipeRight}
         type="button"
-        variant="outline"
       >
-        Swipe right
+        Swipe droite
       </Button>
-      {swipeDirection ? (
-        <p className="col-span-2 text-center text-sm text-muted-foreground">Direction actuelle: {swipeDirection}</p>
+      {lastSwipe ? (
+        <p className="col-span-2 text-center text-xs uppercase tracking-[0.08em] text-white/60">
+          Dernier swipe: {lastSwipe === "right" ? "droite" : "gauche"}
+        </p>
       ) : null}
     </div>
   );

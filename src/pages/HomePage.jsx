@@ -7,6 +7,7 @@ import FooterSection from "../sections/FooterSection";
 import HeaderSection from "../sections/HeaderSection";
 import HeroSection from "../sections/HeroSection";
 import InspirationSection from "../sections/InspirationSection";
+import TinderTeaserSection from "../sections/TinderTeaserSection";
 import { useUiStore } from "@/store/ui-store";
 
 function HomePage() {
@@ -28,6 +29,7 @@ function HomePage() {
       <main>
         <HeroSection />
         <FeaturedHotelsSection />
+        <TinderTeaserSection />
         <CategoriesSection />
         <InspirationSection />
         <ArticlesSection />

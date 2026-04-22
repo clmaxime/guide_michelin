@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,6 @@ import { michelinHotels } from "@/data/michelin-hotels";
 import HeaderSection from "@/sections/HeaderSection";
 import FooterSection from "@/sections/FooterSection";
 import { useUiStore } from "@/store/ui-store";
-import { useState } from "react";
 
 function formatLocation(slug) {
   if (!slug) return "Destination Michelin";
@@ -54,7 +53,7 @@ function HotelsPage() {
 
   async function toggleHotelFavorite(hotel) {
     if (!user) {
-      setMessage("Connecte-toi pour ajouter un hôtel en favoris.");
+      setMessage("Connecte-toi pour ajouter un hÃ´tel en favoris.");
       return;
     }
     const hotelKey = buildHotelKey(hotel);
@@ -80,7 +79,7 @@ function HotelsPage() {
       }
       setMessage("");
     } catch {
-      setMessage("Impossible de mettre à jour les favoris hôtels.");
+      setMessage("Impossible de mettre Ã  jour les favoris hÃ´tels.");
     }
   }
 
@@ -91,14 +90,14 @@ function HotelsPage() {
         <section className="mx-auto w-full max-w-[1220px] px-4 py-12 md:px-7 md:py-14 xl:py-16">
           <header className="mb-8 flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-primary">Sélection hôtels</p>
-              <h1 className="font-title text-[2.1rem] leading-[1.1] text-white md:text-[2.7rem]">Hôtels recommandés</h1>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-primary">SÃ©lection hÃ´tels</p>
+              <h1 className="font-title text-[2.1rem] leading-[1.1] text-white md:text-[2.7rem]">HÃ´tels recommandÃ©s</h1>
               <p className="mt-2 max-w-[52rem] text-white/55">
-                Une sélection premium inspirée du Guide Michelin, dans une ambiance sombre cohérente avec le reste du site.
+                Une sÃ©lection premium inspirÃ©e du Guide Michelin, dans une ambiance sombre cohÃ©rente avec le reste du site.
               </p>
             </div>
             <Link className={buttonVariants({ className: "rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm text-white hover:bg-white/20" })} to="/">
-              Retour à l'accueil
+              Retour Ã  l'accueil
             </Link>
           </header>
 

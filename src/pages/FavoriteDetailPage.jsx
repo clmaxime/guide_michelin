@@ -37,7 +37,7 @@ function extractIngredients(caption) {
     .split(/[,.·;-]/)
     .map((item) => item.trim())
     .filter(Boolean)
-    .slice(0, 5);
+    .slice(0, 6);
 }
 
 function formatDate(value) {
@@ -148,64 +148,64 @@ function FavoriteDetailPage() {
   return (
     <>
       <HeaderSection />
-      <main className="min-h-screen bg-[radial-gradient(circle_at_0%_0%,#f9eef1_0%,#f5f5f7_40%,#f2f3f5_100%)] pt-[4.4rem]">
-        <section className="mx-auto w-full max-w-[1120px] px-4 py-7 md:px-7 md:py-10">
-          <Link className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline" to="/favorites">
+      <main className="min-h-screen bg-[#0f0f0f] pt-[4.4rem]">
+        <section className="mx-auto w-full max-w-[1180px] px-4 py-7 md:px-7 md:py-10">
+          <Link className="mb-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline" to="/favorites">
             <ArrowLeft className="size-4" />
             Retour aux favoris
           </Link>
 
           {message && !favorite ? (
-            <div className="rounded-2xl border border-[#ead8dd] bg-white p-5 text-sm text-[#5e6166]">{message}</div>
+            <div className="rounded-2xl border border-white/12 bg-white/[0.05] p-5 text-sm text-white/75">{message}</div>
           ) : null}
 
-          {!message && !favorite ? <p className="text-sm text-[#5e6166]">Chargement de la fiche...</p> : null}
+          {!message && !favorite ? <p className="text-sm text-white/65">Chargement de la fiche...</p> : null}
 
           {favorite ? (
-            <article className="overflow-hidden rounded-[1.9rem] border border-[#eadce0] bg-white shadow-[0_24px_50px_rgba(17,17,17,0.08)]">
+            <article className="overflow-hidden rounded-[1.9rem] border border-white/12 bg-white/[0.05] shadow-[0_24px_50px_rgba(0,0,0,0.45)] backdrop-blur-md">
               <div className="relative">
                 <img alt={favorite.dishTitle} className="h-[300px] w-full object-cover md:h-[360px]" src={favorite.dishImage} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
-                <p className="absolute left-5 top-5 rounded-full bg-white/95 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.09em] text-primary">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                <p className="absolute left-5 top-5 rounded-full border border-white/35 bg-black/45 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.09em] text-white">
                   {favorite.dishCuisine}
                 </p>
               </div>
 
               <div className="grid gap-6 p-5 md:p-8 lg:grid-cols-[1.25fr_0.95fr]">
                 <div>
-                  <h1 className="font-title text-4xl leading-tight text-[#151619] md:text-5xl">{favorite.dishTitle}</h1>
-                  <p className="mt-3 text-base text-[#4f5258]">{favorite.dishCaption}</p>
+                  <h1 className="font-title text-4xl leading-tight text-white md:text-5xl">{favorite.dishTitle}</h1>
+                  <p className="mt-3 text-base text-white/75">{favorite.dishCaption}</p>
 
                   <div className="mt-5 grid gap-2 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-[#ece3e6] bg-[#faf7f8] p-3">
-                      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-[#8a6a71]">Préparation</p>
-                      <p className="mt-1 text-sm font-semibold text-[#1c1d20]">~ {prepTime} min</p>
+                    <div className="rounded-2xl border border-white/12 bg-black/25 p-3">
+                      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-white/55">Préparation</p>
+                      <p className="mt-1 text-sm font-semibold text-white">~ {prepTime} min</p>
                     </div>
-                    <div className="rounded-2xl border border-[#ece8f3] bg-[#f8f6ff] p-3">
-                      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-[#7362a6]">Style</p>
-                      <p className="mt-1 text-sm font-semibold text-[#1c1d20]">Gastronomique</p>
+                    <div className="rounded-2xl border border-white/12 bg-black/25 p-3">
+                      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-white/55">Style</p>
+                      <p className="mt-1 text-sm font-semibold text-white">Gastronomique</p>
                     </div>
-                    <div className="rounded-2xl border border-[#e7edea] bg-[#f5faf8] p-3">
-                      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-[#4f8b72]">Service</p>
-                      <p className="mt-1 text-sm font-semibold text-[#1c1d20]">À la carte</p>
+                    <div className="rounded-2xl border border-white/12 bg-black/25 p-3">
+                      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-white/55">Service</p>
+                      <p className="mt-1 text-sm font-semibold text-white">À la carte</p>
                     </div>
                   </div>
 
-                  <div className="mt-5 rounded-2xl border border-[#ece3e6] bg-[#fffafa] p-4">
-                    <p className="mb-2 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[#8a6a71]">
+                  <div className="mt-5 rounded-2xl border border-white/12 bg-black/20 p-4">
+                    <p className="mb-2 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-white/60">
                       <ChefHat className="size-3.5" />
                       Profil du plat
                     </p>
                     {ingredients.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {ingredients.map((ingredient) => (
-                          <span className="rounded-full border border-[#ead9de] bg-white px-2.5 py-1 text-xs text-[#4f5258]" key={ingredient}>
+                          <span className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs text-white/85" key={ingredient}>
                             {ingredient}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-[#5e6166]">Informations complémentaires bientôt disponibles.</p>
+                      <p className="text-sm text-white/70">Informations complémentaires bientôt disponibles.</p>
                     )}
                   </div>
 
@@ -214,61 +214,63 @@ function FavoriteDetailPage() {
                       <RefreshCcw className="size-4" />
                       Prolonger de 24h
                     </Button>
-                    <Link className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#ded2d7] bg-white px-4 text-sm font-semibold text-[#1d1e22] transition hover:bg-[#faf7f8]" to="/favorites">
+                    <Link className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-semibold text-white transition hover:bg-white/20" to="/favorites">
                       Retour à la liste
                     </Link>
                   </div>
 
-                  {message ? <p className="mt-3 text-sm text-[#5e6166]">{message}</p> : null}
+                  {message ? <p className="mt-3 text-sm text-white/65">{message}</p> : null}
                 </div>
 
                 <aside className="space-y-4">
-                  <div className="rounded-2xl border border-[#ece3e6] bg-[#faf7f8] p-4">
-                    <p className="mb-2 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[#8a6a71]">
+                  <div className="rounded-2xl border border-white/12 bg-black/20 p-4">
+                    <p className="mb-2 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-white/60">
                       <Utensils className="size-3.5" />
                       Restaurant
                     </p>
-                    <h2 className="font-title text-2xl text-[#1a1b1e]">{favorite.restaurantName}</h2>
-                    <p className="mt-1 inline-flex items-start gap-1.5 text-sm text-[#4f5258]">
+                    <h2 className="font-title text-2xl text-white">{favorite.restaurantName}</h2>
+                    <p className="mt-1 inline-flex items-start gap-1.5 text-sm text-white/80">
                       <MapPin className="mt-0.5 size-3.5 shrink-0" />
                       {favorite.restaurantAddress}
                     </p>
-                    <p className="mt-2 inline-flex items-center gap-1.5 text-sm text-[#4f5258]">
+                    <p className="mt-2 inline-flex items-center gap-1.5 text-sm text-white/75">
                       <Clock3 className="size-3.5" />
                       {favorite.restaurantHours || "Horaires non renseignés"}
                     </p>
-                    <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-[#4f5258]">
+                    <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-white/75">
                       <Phone className="size-3.5" />
                       {favorite.restaurantPhone || "Téléphone non renseigné"}
                     </p>
 
                     {restaurantRouteId ? (
                       <Link
-                        className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-xl bg-[#17181a] px-3.5 text-sm font-semibold text-white transition hover:bg-black"
+                        className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-sm font-semibold text-white transition hover:bg-primary/85"
                         to={`/restaurants/${restaurantRouteId}`}
                       >
                         Voir la fiche restaurant
                         <ExternalLink className="size-3.5" />
                       </Link>
                     ) : (
-                      <p className="mt-4 text-sm text-[#5e6166]">Lien restaurant indisponible pour ce favori.</p>
+                      <p className="mt-4 text-sm text-white/65">Lien restaurant indisponible pour ce favori.</p>
                     )}
                   </div>
 
-                  <div className="rounded-2xl border border-[#ece3e6] bg-white p-4">
-                    <p className="mb-1 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[#8a6a71]">
+                  <div className="rounded-2xl border border-white/12 bg-black/20 p-4">
+                    <p className="mb-1 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-white/60">
                       <CalendarClock className="size-3.5" />
                       Validité du favori
                     </p>
-                    <p className="text-sm text-[#4f5258]">Valable jusqu'au <span className="font-semibold text-[#1a1b1e]">{formatDate(favorite.expiresAt)}</span></p>
+                    <p className="text-sm text-white/75">
+                      Valable jusqu'au <span className="font-semibold text-white">{formatDate(favorite.expiresAt)}</span>
+                    </p>
                   </div>
 
-                  <div className="rounded-2xl border border-[#ece3e6] bg-white p-4">
-                    <p className="mb-1 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[#8a6a71]">
+                  <div className="rounded-2xl border border-white/12 bg-black/20 p-4">
+                    <p className="mb-1 inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-white/60">
                       <Sparkles className="size-3.5" />
                       Conseil
                     </p>
-                    <p className="text-sm text-[#4f5258]">Consulte la fiche restaurant pour vérifier les horaires et réserver au bon moment.</p>
+                    <p className="text-sm text-white/75">Consulte la fiche restaurant pour vérifier les horaires et réserver au bon moment.</p>
                   </div>
                 </aside>
               </div>

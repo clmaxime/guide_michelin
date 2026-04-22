@@ -97,9 +97,9 @@ function FavoritesPage() {
         await favoritesApi.clearHotels();
         setHotelFavorites([]);
       }
-      setMessage("Catégorie réinitialisée.");
+      setMessage("CatÃ©gorie rÃ©initialisÃ©e.");
     } catch {
-      setMessage("Impossible de réinitialiser cette catégorie.");
+      setMessage("Impossible de rÃ©initialiser cette catÃ©gorie.");
     } finally {
       setBusy("");
     }
@@ -148,12 +148,12 @@ function FavoritesPage() {
             <div className="mt-4 flex flex-wrap gap-2">
               <TabButton active={activeTab === "dishes"} count={activeDishFavorites.length} icon={UtensilsCrossed} label="Plats" onClick={() => setActiveTab("dishes")} />
               <TabButton active={activeTab === "restaurants"} count={restaurantFavorites.length} icon={Building2} label="Restaurants" onClick={() => setActiveTab("restaurants")} />
-              <TabButton active={activeTab === "hotels"} count={hotelFavorites.length} icon={Hotel} label="Hôtels" onClick={() => setActiveTab("hotels")} />
+              <TabButton active={activeTab === "hotels"} count={hotelFavorites.length} icon={Hotel} label="HÃ´tels" onClick={() => setActiveTab("hotels")} />
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <Button className="rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20" disabled={busy === `clear:${activeTab}`} onClick={clearCategory} type="button" variant="outline">
                 <Trash2 className="size-4" />
-                Réinitialiser la catégorie
+                RÃ©initialiser la catÃ©gorie
               </Button>
               {message ? <p className="text-sm text-white/65">{message}</p> : null}
             </div>
@@ -237,14 +237,14 @@ function FavoritesPage() {
           {activeTab === "dishes" && activeDishFavorites.length === 0 ? (
             <div className="mt-6 rounded-2xl border border-white/12 bg-white/[0.06] p-6 text-center text-white/70">
               <Heart className="mx-auto mb-2 size-5 text-primary" />
-              Aucun favori dans cette catégorie.
+              Aucun favori dans cette catÃ©gorie.
             </div>
           ) : null}
           {activeTab === "restaurants" && restaurantFavorites.length === 0 ? (
             <div className="mt-6 rounded-2xl border border-white/12 bg-white/[0.06] p-6 text-center text-white/70">Aucun restaurant favori.</div>
           ) : null}
           {activeTab === "hotels" && hotelFavorites.length === 0 ? (
-            <div className="mt-6 rounded-2xl border border-white/12 bg-white/[0.06] p-6 text-center text-white/70">Aucun hôtel favori.</div>
+            <div className="mt-6 rounded-2xl border border-white/12 bg-white/[0.06] p-6 text-center text-white/70">Aucun hÃ´tel favori.</div>
           ) : null}
         </section>
       </main>

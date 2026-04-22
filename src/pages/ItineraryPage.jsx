@@ -51,7 +51,7 @@ function ItineraryPage() {
     }
 
     if (!hasValidCoordinates) {
-      setErrorMessage("Coordonnées invalides. Lance une nouvelle recherche depuis la page d'accueil.");
+      setErrorMessage("CoordonnÃ©es invalides. Lance une nouvelle recherche depuis la page d'accueil.");
       return;
     }
 
@@ -81,7 +81,7 @@ function ItineraryPage() {
       try {
         const route = await getRoute(from, to, controller.signal);
         if (!route) {
-          setErrorMessage("Aucun itinéraire trouvé pour ces adresses.");
+          setErrorMessage("Aucun itinÃ©raire trouvÃ© pour ces adresses.");
           return;
         }
 
@@ -127,7 +127,7 @@ function ItineraryPage() {
         }
       } catch (error) {
         if (error.name !== "AbortError") {
-          setErrorMessage("Impossible de calculer l'itinéraire.");
+          setErrorMessage("Impossible de calculer l'itinÃ©raire.");
         }
       }
     };
@@ -150,10 +150,10 @@ function ItineraryPage() {
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.08em] text-primary">Navigation</p>
-              <h1 className="font-title text-3xl text-white">Itinéraire personnalisé</h1>
+              <h1 className="font-title text-3xl text-white">ItinÃ©raire personnalisÃ©</h1>
             </div>
             <Link className={buttonVariants({ className: "h-10 rounded-lg border border-white/20 bg-white/10 text-white hover:bg-white/20" })} to="/">
-              Retour à l'accueil
+              Retour Ã  l'accueil
             </Link>
           </div>
 

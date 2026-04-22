@@ -71,9 +71,9 @@ function ProfilePage() {
         allergens: splitCsv(form.allergens),
         excludedTags: splitCsv(form.excludedTags),
       });
-      setMessage("Préférences enregistrées.");
+      setMessage("PrÃ©fÃ©rences enregistrÃ©es.");
     } catch {
-      setMessage("Impossible d'enregistrer les préférences.");
+      setMessage("Impossible d'enregistrer les prÃ©fÃ©rences.");
     } finally {
       setSaving(false);
     }
@@ -104,19 +104,19 @@ function ProfilePage() {
             </div>
 
             <div className="divide-y divide-white/10">
-              <InfoRow label="Prénom" value={user.prenom} />
+              <InfoRow label="PrÃ©nom" value={user.prenom} />
               <InfoRow label="Nom" value={user.nom} />
               <InfoRow label="Email" value={user.email} />
-              {user.phoneNumber && <InfoRow label="Téléphone" value={user.phoneNumber} />}
-              {user.aboutMe && <InfoRow label="À propos" value={user.aboutMe} />}
+              {user.phoneNumber && <InfoRow label="TÃ©lÃ©phone" value={user.phoneNumber} />}
+              {user.aboutMe && <InfoRow label="Ã€ propos" value={user.aboutMe} />}
               <InfoRow label="Membre depuis" value={memberSince} />
             </div>
           </div>
 
           <form className="rounded-2xl border border-white/12 bg-white/[0.06] p-6 shadow-sm backdrop-blur-md" onSubmit={handleSubmit}>
-            <h2 className="mb-1 font-title text-2xl text-white">Préférences alimentaires</h2>
+            <h2 className="mb-1 font-title text-2xl text-white">PrÃ©fÃ©rences alimentaires</h2>
             <p className="mb-5 text-sm text-white/60">
-              Ces paramètres sont enregistrés sur ton compte et utilisés automatiquement dans le mode Tinder.
+              Ces paramÃ¨tres sont enregistrÃ©s sur ton compte et utilisÃ©s automatiquement dans le mode Tinder.
             </p>
 
             <label className="mb-4 flex items-center gap-2 text-sm font-medium text-white">
@@ -131,19 +131,19 @@ function ProfilePage() {
 
             <Field
               hint="Ex: porc, champignon, coriandre"
-              label="Aliments refusés"
+              label="Aliments refusÃ©s"
               value={form.excludedIngredients}
               onChange={(value) => setForm((prev) => ({ ...prev, excludedIngredients: value }))}
             />
             <Field
-              hint="Ex: gluten, arachides, crustacés"
-              label="Allergènes à exclure"
+              hint="Ex: gluten, arachides, crustacÃ©s"
+              label="AllergÃ¨nes Ã  exclure"
               value={form.allergens}
               onChange={(value) => setForm((prev) => ({ ...prev, allergens: value }))}
             />
             <Field
               hint="Ex: spicy, seafood"
-              label="Tags à exclure"
+              label="Tags Ã  exclure"
               value={form.excludedTags}
               onChange={(value) => setForm((prev) => ({ ...prev, excludedTags: value }))}
             />
@@ -173,7 +173,7 @@ function Field({ label, hint, value, onChange }) {
         type="text"
         value={value}
       />
-      <span className="mt-1 block text-xs text-white/45">Séparer les valeurs par des virgules.</span>
+      <span className="mt-1 block text-xs text-white/45">SÃ©parer les valeurs par des virgules.</span>
     </label>
   );
 }

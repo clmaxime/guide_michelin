@@ -7,6 +7,12 @@ import { useAuthStore } from "@/store/auth-store";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { UserMenu } from "@/components/auth/UserMenu";
 
+const navLinks = [
+  { label: "Restaurants", href: "/restaurants" },
+  { label: "Hôtels", href: "/hotels" },
+  { label: "Itinéraire", href: "/itinerary" },
+];
+
 function HeaderSection() {
   const scrolled = useUiStore((state) => state.scrolled);
   const setScrolled = useUiStore((state) => state.setScrolled);
@@ -36,11 +42,11 @@ function HeaderSection() {
             {navLinks.map((item) => (
               <Link
                 className={`text-[0.95rem] font-semibold ${textColor}`}
-                href={item.href}
+                to={item.href}
                 key={item.label}
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
           </nav>
 

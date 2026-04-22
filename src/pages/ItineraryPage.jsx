@@ -8,6 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getRoute, MAPBOX_ACCESS_TOKEN, searchPlaces } from "@/lib/mapbox";
 import { restaurantApi } from "@/lib/api";
+import HeaderSection from "@/sections/HeaderSection";
 
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
 
@@ -339,9 +340,102 @@ function ItineraryPage() {
     };
   }, [from, to, hasValidCoordinates]);
 
+  if (!hasValidCoordinates) {
+    return (
+      <>
+        <HeaderSection />
+        <div className="flex min-h-screen items-center justify-center bg-[#0f0f0f] px-4">
+          <div className="w-full max-w-xl">
+            <p className="mb-2 text-center text-xs font-semibold uppercase tracking-[0.08em] text-white/40">Itinéraire</p>
+            <h1 className="font-title mb-8 text-center text-3xl text-white">Où souhaitez-vous aller ?</h1>
+
+            <form onSubmit={handleEditSubmit} className="relative grid gap-3">
+              <div className="relative">
+                <label className="flex flex-col rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                  <span className="mb-1 text-[0.65rem] font-semibold uppercase tracking-[0.07em] text-white/50">Lieu de départ</span>
+                  <Input
+                    className="h-7 border-0 bg-transparent p-0 text-white placeholder:text-white/30 focus-visible:ring-0"
+                    value={editPoints.start.query}
+                    onChange={(e) => updateEditQuery("start", e.target.value)}
+                    onFocus={() => setEditActiveField("start")}
+                    placeholder="Adresse de départ"
+                    autoFocus
+                  />
+                </label>
+                {editActiveField === "start" && (editLoadingSugg || editSuggestions.length > 0) && (
+                  <div className="absolute left-0 right-0 top-[calc(100%+0.35rem)] z-50 rounded-xl border border-white/20 bg-[#141414]/95 p-1 shadow-lg backdrop-blur-sm">
+                    {editLoadingSugg && <p className="px-3 py-2 text-xs text-white/50">Recherche...</p>}
+                    {!editLoadingSugg && editSuggestions.map((f) => (
+                      <button key={f.id} type="button" onClick={() => selectEditSuggestion(f)}
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10">
+                        {f.place_name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="relative">
+                <label className="flex flex-col rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                  <span className="mb-1 text-[0.65rem] font-semibold uppercase tracking-[0.07em] text-white/50">Lieu d'arrivée</span>
+                  <Input
+                    className="h-7 border-0 bg-transparent p-0 text-white placeholder:text-white/30 focus-visible:ring-0"
+                    value={editPoints.end.query}
+                    onChange={(e) => updateEditQuery("end", e.target.value)}
+                    onFocus={() => setEditActiveField("end")}
+                    placeholder="Adresse d'arrivée"
+                  />
+                </label>
+                {editActiveField === "end" && (editLoadingSugg || editSuggestions.length > 0) && (
+                  <div className="absolute left-0 right-0 top-[calc(100%+0.35rem)] z-50 rounded-xl border border-white/20 bg-[#141414]/95 p-1 shadow-lg backdrop-blur-sm">
+                    {editLoadingSugg && <p className="px-3 py-2 text-xs text-white/50">Recherche...</p>}
+                    {!editLoadingSugg && editSuggestions.map((f) => (
+                      <button key={f.id} type="button" onClick={() => selectEditSuggestion(f)}
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-white transition hover:bg-white/10">
+                        {f.place_name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                <span className="shrink-0 text-[0.68rem] font-semibold uppercase tracking-[0.07em] text-white/50">
+                  Écart max au trajet
+                </span>
+                <input
+                  type="range"
+                  min={1}
+                  max={100}
+                  value={maxDistanceKm}
+                  onChange={(e) => setMaxDistanceKm(Number(e.target.value))}
+                  className="flex-1 accent-[#e60023]"
+                />
+                <span className="w-14 shrink-0 text-right text-sm font-semibold text-white">
+                  {maxDistanceKm} km
+                </span>
+              </div>
+
+              <button
+                type="submit"
+                disabled={!hasValidEditPoints}
+                className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-[#e60023] py-3 text-sm font-bold text-white transition hover:bg-[#c9001f] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Search className="size-4" />
+                Lancer l'itinéraire
+              </button>
+            </form>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
-    <main className="min-h-screen bg-[#0f0f0f] px-4 py-8 md:px-7 md:py-10">
-      <div className="mx-auto w-full max-w-[1220px]">
+    <>
+      <HeaderSection />
+      <main className="min-h-screen bg-[#0f0f0f] px-4 pt-[4.4rem] pb-8 md:px-7 md:pb-10">
+      <div className="mx-auto w-full max-w-[1220px] pt-8">
 
         {/* Header */}
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
@@ -456,6 +550,7 @@ function ItineraryPage() {
                 : "Calcul en cours..."}
             </p>
           </div>
+        </div>
 
         {errorMessage && (
           <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
@@ -481,7 +576,7 @@ function ItineraryPage() {
               )}
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
               <span className="shrink-0 text-[0.68rem] font-semibold uppercase tracking-[0.07em] text-white/50">
                 Écart max au trajet
               </span>
@@ -533,7 +628,8 @@ function ItineraryPage() {
           )}
         </section>
       </div>
-    </main>
+      </main>
+    </>
   );
 }
 

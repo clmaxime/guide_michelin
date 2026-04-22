@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Locate, MapPin, Search, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Heart, Locate, MapPin, Search, Star, X } from "lucide-react";
 import { MichelinStars } from "@/components/MichelinStars";
 import michelinStarUrl from "@/assets/michelin-star.svg";
 import { restaurantApi } from "@/lib/api";

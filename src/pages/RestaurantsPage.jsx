@@ -28,7 +28,7 @@ function FilterBar({ filters, onChange }) {
 
   function requestGeo() {
     if (!navigator.geolocation) {
-      setGeoError("GÃ©olocalisation non supportÃ©e");
+      setGeoError("Géolocalisation non supportée");
       return;
     }
     setGeoLoading(true);
@@ -39,7 +39,7 @@ function FilterBar({ filters, onChange }) {
         setGeoLoading(false);
       },
       () => {
-        setGeoError("Position refusÃ©e");
+        setGeoError("Position refusée");
         setGeoLoading(false);
       },
       { timeout: 8000 },
@@ -75,7 +75,7 @@ function FilterBar({ filters, onChange }) {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="mr-1 text-xs text-white/40">Ã‰toiles</span>
+            <span className="mr-1 text-xs text-white/40">Étoiles</span>
             {[1, 2, 3].map((n) => (
               <button
                 key={n}
@@ -191,10 +191,10 @@ function RestaurantCard({ restaurant, isFavorite, onToggleFavorite }) {
         </div>
         {todayHoraire?.creneaux?.length > 0 ? (
           <p className="text-xs font-medium text-emerald-400">
-            Ouvert Â· {todayHoraire.creneaux[0].ouverture}â€“{todayHoraire.creneaux[0].fermeture}
+            Ouvert · {todayHoraire.creneaux[0].ouverture}–{todayHoraire.creneaux[0].fermeture}
           </p>
         ) : (
-          <p className="text-xs text-white/30">Horaires non renseignÃ©s</p>
+          <p className="text-xs text-white/30">Horaires non renseignés</p>
         )}
         <div className="mt-3 flex items-center gap-1 text-xs text-white/60 transition-colors group-hover:text-white">
           Voir la fiche <ArrowRight className="size-3" />
@@ -261,7 +261,7 @@ export default function RestaurantsPage() {
       }
       setFavoriteMessage("");
     } catch {
-      setFavoriteMessage("Impossible de mettre Ã  jour les favoris restaurants.");
+      setFavoriteMessage("Impossible de mettre à jour les favoris restaurants.");
     }
   }
 
@@ -289,8 +289,8 @@ export default function RestaurantsPage() {
         <div className="mx-auto max-w-[1220px] px-4 py-10 md:px-7">
           {!loading && (
             <p className="mb-6 text-xs text-white/30">
-              {restaurants.length === 0 ? "Aucun rÃ©sultat" : `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""}`}
-              {filters.lat != null && ` Â· dans un rayon de ${filters.range} km`}
+              {restaurants.length === 0 ? "Aucun résultat" : `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""}`}
+              {filters.lat != null && ` · dans un rayon de ${filters.range} km`}
             </p>
           )}
           {favoriteMessage ? <p className="mb-4 text-sm text-white/70">{favoriteMessage}</p> : null}
@@ -315,13 +315,13 @@ export default function RestaurantsPage() {
                   <Star key={i} className="size-6 text-white/10" />
                 ))}
               </div>
-              <p className="font-title text-xl text-white/30">Aucun restaurant trouvÃ©</p>
+              <p className="font-title text-xl text-white/30">Aucun restaurant trouvé</p>
               <p className="mt-1 text-sm text-white/20">Essayez d'ajuster vos filtres</p>
               <button
                 onClick={() => handleFiltersChange(DEFAULT_FILTERS)}
                 className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white/70 backdrop-blur-md transition hover:bg-white/15"
               >
-                RÃ©initialiser les filtres
+                Réinitialiser les filtres
               </button>
             </div>
           )}

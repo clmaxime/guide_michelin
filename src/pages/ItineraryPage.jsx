@@ -2,15 +2,84 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, MapPin, Pencil, RefreshCw, Search, Star, X } from "lucide-react";
+import { ArrowRight, Locate, MapPin, Pencil, RefreshCw, Search, Star, X } from "lucide-react";
 import { MichelinStars } from "@/components/MichelinStars";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getRoute, MAPBOX_ACCESS_TOKEN, searchPlaces } from "@/lib/mapbox";
+import { getRoute, MAPBOX_ACCESS_TOKEN, reverseGeocode, searchPlaces } from "@/lib/mapbox";
 import { restaurantApi } from "@/lib/api";
 import HeaderSection from "@/sections/HeaderSection";
 
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
+
+function RestaurantModal({ restaurant, onClose }) {
+  const image = restaurant.imageUrls?.[0];
+  const todayIndex = new Date().getDay();
+  const todayKey = DAY_ORDER[todayIndex === 0 ? 6 : todayIndex - 1];
+  const todayHoraire = restaurant.horaires?.find((h) => h.jour === todayKey);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-white/15 bg-[#141414]/90 shadow-2xl backdrop-blur-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {image ? (
+          <div className="relative h-44 overflow-hidden">
+            <img src={image} alt={restaurant.nom} className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#141414]/80 to-transparent" />
+          </div>
+        ) : (
+          <div className="h-24 bg-gradient-to-br from-neutral-800 to-neutral-950" />
+        )}
+
+        <button
+          onClick={onClose}
+          className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full bg-black/50 text-white/70 backdrop-blur-sm transition hover:bg-black/70 hover:text-white"
+        >
+          <X className="size-4" />
+        </button>
+
+        <div className="p-5">
+          <div className="mb-1">
+            <MichelinStars count={restaurant.distinction} size="sm" />
+          </div>
+          <h3 className="font-title mb-3 text-xl font-semibold text-white">{restaurant.nom}</h3>
+
+          <div className="mb-2 flex items-start gap-1.5">
+            <MapPin className="mt-0.5 size-3.5 shrink-0 text-white/40" />
+            <p className="text-sm text-white/60">{restaurant.adresse}</p>
+          </div>
+
+          {restaurant.distance != null && (
+            <p className="mb-2 text-sm font-medium text-[#e60023]">
+              {restaurant.distance} km du trajet
+            </p>
+          )}
+
+          {todayHoraire?.creneaux?.length > 0 ? (
+            <p className="mb-4 text-sm font-medium text-emerald-400">
+              Ouvert · {todayHoraire.creneaux[0].ouverture}–{todayHoraire.creneaux[0].fermeture}
+            </p>
+          ) : (
+            <p className="mb-4 text-sm text-white/30">Horaires non renseignés</p>
+          )}
+
+          <Link
+            to={`/restaurants/${restaurant.id}`}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#e60023] py-2.5 text-sm font-bold text-white transition hover:bg-[#c9001f]"
+          >
+            Voir la fiche complète
+            <ArrowRight className="size-4" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function parseCoordinate(value) {
   const parsed = Number.parseFloat(value);
@@ -86,6 +155,7 @@ function ItineraryPage() {
   const [restaurantsLoading, setRestaurantsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [appliedDistance, setAppliedDistance] = useState(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   // Edit route form state
   const [isEditingRoute, setIsEditingRoute] = useState(false);
@@ -128,7 +198,6 @@ function ItineraryPage() {
 
   // Autocomplete for edit form
   useEffect(() => {
-    if (!isEditingRoute) return;
     const q = editPoints[editActiveField]?.query.trim() ?? "";
     if (q.length < 3) { setEditSuggestions([]); return; }
 
@@ -188,6 +257,26 @@ function ItineraryPage() {
 
   const hasValidEditPoints = Boolean(editPoints.start.feature && editPoints.end.feature);
 
+  const [isGeolocating, setIsGeolocating] = useState(false);
+  const handleGeolocate = () => {
+    if (!navigator.geolocation) return;
+    setIsGeolocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        try {
+          const feature = await reverseGeocode(coords.longitude, coords.latitude);
+          if (feature) {
+            setEditPoints((prev) => ({ ...prev, start: { query: feature.place_name, feature } }));
+          }
+        } finally {
+          setIsGeolocating(false);
+        }
+      },
+      () => setIsGeolocating(false),
+      { timeout: 8000 },
+    );
+  };
+
   // --- Map & restaurants logic ---
 
   const placeRestaurantMarkers = (rests) => {
@@ -213,18 +302,13 @@ function ItineraryPage() {
       `;
       el.textContent = "★".repeat(restaurant.distinction);
 
-      const popup = new mapboxgl.Popup({ offset: 15, maxWidth: "220px" }).setHTML(`
-        <div style="font-family:sans-serif;padding:2px 0;line-height:1.5">
-          <div style="font-weight:600;font-size:13px">${restaurant.nom}</div>
-          <div style="color:#c9a227;font-size:12px">${"★".repeat(restaurant.distinction)}</div>
-          <div style="font-size:11px;color:#666;margin-top:2px">${restaurant.adresse}</div>
-          <div style="font-size:11px;color:#e60023;margin-top:4px;font-weight:500">${restaurant.distance} km du trajet</div>
-        </div>
-      `);
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setSelectedRestaurant(restaurant);
+      });
 
       const marker = new mapboxgl.Marker({ element: el })
         .setLngLat([restaurant.longitude, restaurant.latitude])
-        .setPopup(popup)
         .addTo(map);
 
       restaurantMarkersRef.current.push(marker);
@@ -353,14 +437,25 @@ function ItineraryPage() {
               <div className="relative">
                 <label className="flex flex-col rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
                   <span className="mb-1 text-[0.65rem] font-semibold uppercase tracking-[0.07em] text-white/50">Lieu de départ</span>
-                  <Input
-                    className="h-7 border-0 bg-transparent p-0 text-white placeholder:text-white/30 focus-visible:ring-0"
-                    value={editPoints.start.query}
-                    onChange={(e) => updateEditQuery("start", e.target.value)}
-                    onFocus={() => setEditActiveField("start")}
-                    placeholder="Adresse de départ"
-                    autoFocus
-                  />
+                  <div className="flex items-center gap-2">
+                    <Input
+                      className="h-7 flex-1 border-0 bg-transparent p-0 text-white placeholder:text-white/30 focus-visible:ring-0"
+                      value={editPoints.start.query}
+                      onChange={(e) => updateEditQuery("start", e.target.value)}
+                      onFocus={() => setEditActiveField("start")}
+                      placeholder="Adresse de départ"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={handleGeolocate}
+                      disabled={isGeolocating}
+                      title="Utiliser ma position actuelle"
+                      className="shrink-0 rounded-md p-1 text-white/40 transition hover:text-white disabled:opacity-30"
+                    >
+                      <Locate className={`size-4 ${isGeolocating ? "animate-pulse" : ""}`} />
+                    </button>
+                  </div>
                 </label>
                 {editActiveField === "start" && (editLoadingSugg || editSuggestions.length > 0) && (
                   <div className="absolute left-0 right-0 top-[calc(100%+0.35rem)] z-50 rounded-xl border border-white/20 bg-[#141414]/95 p-1 shadow-lg backdrop-blur-sm">
@@ -629,6 +724,13 @@ function ItineraryPage() {
         </section>
       </div>
       </main>
+
+      {selectedRestaurant && (
+        <RestaurantModal
+          restaurant={selectedRestaurant}
+          onClose={() => setSelectedRestaurant(null)}
+        />
+      )}
     </>
   );
 }

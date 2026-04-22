@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { UserCircle, User, LogOut } from "lucide-react";
+import { UserCircle, User, LogOut, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -44,6 +44,15 @@ export function UserMenu() {
             </p>
             <p className="mt-0.5 truncate text-xs text-muted-foreground">{user?.email}</p>
           </div>
+
+          <Link
+            to="/favorites"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground transition hover:bg-accent"
+          >
+            <Heart className="size-4 text-muted-foreground" />
+            Mes favoris
+          </Link>
 
           <Link
             to="/profile"

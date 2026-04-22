@@ -248,11 +248,11 @@ function ItineraryPage() {
 
   useEffect(() => {
     if (!MAPBOX_ACCESS_TOKEN) {
-      setErrorMessage("Token Mapbox introuvable. Ajoute `VITE_MAPBOX_ACCESS_TOKEN` dans `.env`.");
+      setErrorMessage("Token Mapbox introuvable. Ajoute VITE_MAPBOX_ACCESS_TOKEN dans le fichier .env.");
       return;
     }
     if (!hasValidCoordinates) {
-      setErrorMessage("Coordonnées invalides. Lance une nouvelle recherche depuis la page d'accueil.");
+      setErrorMessage("Coordonn�es invalides. Lance une nouvelle recherche depuis la page d'accueil.");
       return;
     }
 
@@ -289,7 +289,7 @@ function ItineraryPage() {
       try {
         const route = await getRoute(from, to, controller.signal);
         if (!route) {
-          setErrorMessage("Aucun itinéraire trouvé pour ces adresses.");
+          setErrorMessage("Aucun itin�raire trouv� pour ces adresses.");
           return;
         }
 
@@ -321,7 +321,7 @@ function ItineraryPage() {
         else map.on("load", renderRoute);
       } catch (error) {
         if (error.name !== "AbortError") {
-          setErrorMessage("Impossible de calculer l'itinéraire.");
+          setErrorMessage("Impossible de calculer l'itin�raire.");
         }
       }
     };
@@ -456,7 +456,6 @@ function ItineraryPage() {
                 : "Calcul en cours..."}
             </p>
           </div>
-        </div>
 
         {errorMessage && (
           <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">

@@ -32,6 +32,8 @@ export const restaurantApi = {
     return apiFetch(`/restaurants${query ? `?${query}` : ""}`);
   },
   findOne: (id) => apiFetch(`/restaurants/${id}`),
+  findAlongRoute: (body) =>
+    apiFetch("/restaurants/along-route", { method: "POST", body: JSON.stringify(body) }),
 };
 
 export const dishesApi = {

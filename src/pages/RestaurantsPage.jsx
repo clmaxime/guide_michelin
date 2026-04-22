@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Heart, Locate, MapPin, Search, Star, X } from "lucide-react";
 import { favoritesApi, restaurantApi } from "@/lib/api";

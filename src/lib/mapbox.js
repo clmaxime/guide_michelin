@@ -34,6 +34,24 @@ export async function searchPlaces(query, signal) {
   return data.features ?? [];
 }
 
+export async function reverseGeocode(lng, lat) {
+  assertToken();
+
+  const endpoint = `${MAPBOX_BASE_URL}/geocoding/v5/mapbox.places/${lng},${lat}.json`;
+  const params = new URLSearchParams({
+    access_token: MAPBOX_ACCESS_TOKEN,
+    language: "fr",
+    limit: "1",
+    types: "address,place,locality",
+  });
+
+  const response = await fetch(`${endpoint}?${params.toString()}`);
+  if (!response.ok) throw new Error("Échec du géocodage inverse.");
+
+  const data = await response.json();
+  return data.features?.[0] ?? null;
+}
+
 export async function getRoute(origin, destination, signal) {
   assertToken();
 

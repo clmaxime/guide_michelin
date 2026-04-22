@@ -30,7 +30,12 @@ export const heroAssets = {
   detail: heroDetail,
 };
 
-export const headerLinks = ["Restaurants", "Hotels", "Inspiration", "Destinations"];
+export const headerLinks = [
+  { label: "Restaurants", href: "/restaurants" },
+  { label: "Hotels", href: "/hotels" },
+  { label: "Inspiration", href: "/#inspiration" },
+  { label: "Destinations", href: "/#destinations" },
+];
 
 export const searchFields = [
   { key: "destination", icon: iconLocation, label: "Destination" },

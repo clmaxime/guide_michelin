@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import DishCard from "../features/dish-tinder/DishCard";
 import SwipePlaceholder from "../features/dish-tinder/SwipePlaceholder";
 import { cuisineOptions, dishOptions, moodOptions } from "../features/dish-tinder/data/dishes";
 import { useDishTinderStore } from "../features/dish-tinder/store/dish-tinder-store";
+import { sortDishes } from "../lib/dishAlgo";
 
 function DiscoverPage() {
   const selectedCuisine = useDishTinderStore((state) => state.selectedCuisine);
@@ -20,8 +21,6 @@ function DiscoverPage() {
   const swipeDish = useDishTinderStore((state) => state.swipeDish);
   const resetSession = useDishTinderStore((state) => state.resetSession);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-
   const filteredDishes = useMemo(
     () =>
       dishOptions.filter((dish) => {
@@ -33,12 +32,21 @@ function DiscoverPage() {
     [maxPrepTime, selectedCuisine, selectedMood],
   );
 
-  useEffect(() => {
-    setCurrentIndex(0);
-  }, [selectedCuisine, selectedMood, maxPrepTime]);
+  const recommendedDishes = useMemo(
+    () =>
+      sortDishes(filteredDishes, {
+        catalog: dishOptions,
+        selectedCuisine,
+        selectedMood,
+        maxPrepTime,
+        likedIds,
+        dislikedIds,
+      }),
+    [dislikedIds, filteredDishes, likedIds, maxPrepTime, selectedCuisine, selectedMood],
+  );
 
-  const activeDish = filteredDishes[currentIndex] ?? null;
-  const remainingCount = Math.max(filteredDishes.length - currentIndex - 1, 0);
+  const activeDish = recommendedDishes[0] ?? null;
+  const remainingCount = Math.max(recommendedDishes.length - 1, 0);
 
   const handleSwipe = (direction) => {
     if (!activeDish) {
@@ -46,7 +54,6 @@ function DiscoverPage() {
     }
 
     swipeDish(activeDish.id, direction);
-    setCurrentIndex((index) => index + 1);
   };
 
   useEffect(() => {
@@ -65,7 +72,6 @@ function DiscoverPage() {
 
   const handleReset = () => {
     resetSession();
-    setCurrentIndex(0);
   };
 
   return (
@@ -73,7 +79,6 @@ function DiscoverPage() {
       <div className="mx-auto w-full max-w-[1220px] px-4 md:px-7">
         <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-[#ffb9c5]">Food Match</p>
             <h1 className="font-title text-[2rem] leading-tight text-white md:text-[2.7rem]">Mode Tinder - Decouverte repas</h1>
             <p className="mt-2 max-w-[42rem] text-sm text-white/75">
               Swipe droite pour sauvegarder, swipe gauche pour passer. Fleches clavier supportees.
@@ -82,7 +87,7 @@ function DiscoverPage() {
           <div className="flex items-center gap-2">
             <Button className="rounded-lg border border-white/20 bg-white/6 text-white hover:bg-white/12" onClick={handleReset} type="button">
               <RotateCcw className="size-4" />
-              Reset
+               Reset
             </Button>
             <Link className={buttonVariants({ className: "rounded-lg border border-white/20 bg-transparent text-white hover:bg-white/12" })} to="/">
               <ArrowLeft className="size-4" />
@@ -122,32 +127,6 @@ function DiscoverPage() {
                 ))}
               </select>
             </label>
-            <label className="mb-4 block">
-              <span className="mb-1 block text-xs text-white/65">Preparation max: {maxPrepTime} min</span>
-              <input
-                className="w-full accent-[#e60023]"
-                max="60"
-                min="10"
-                onChange={(event) => setMaxPrepTime(Number(event.target.value))}
-                type="range"
-                value={maxPrepTime}
-              />
-            </label>
-
-            <div className="grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="rounded-lg border border-white/15 bg-black/25 py-2">
-                <p className="text-[0.65rem] uppercase tracking-[0.08em] text-white/60">Likes</p>
-                <p className="text-lg font-bold text-[#8ff3be]">{likedIds.length}</p>
-              </div>
-              <div className="rounded-lg border border-white/15 bg-black/25 py-2">
-                <p className="text-[0.65rem] uppercase tracking-[0.08em] text-white/60">Pass</p>
-                <p className="text-lg font-bold text-[#ffb4c1]">{dislikedIds.length}</p>
-              </div>
-              <div className="rounded-lg border border-white/15 bg-black/25 py-2">
-                <p className="text-[0.65rem] uppercase tracking-[0.08em] text-white/60">Restant</p>
-                <p className="text-lg font-bold text-white">{remainingCount}</p>
-              </div>
-            </div>
           </aside>
 
           <section className="space-y-4">

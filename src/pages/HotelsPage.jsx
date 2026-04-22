@@ -66,58 +66,66 @@ function HotelsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f]">
+    <>
       <HeaderSection />
 
-      <main className="mx-auto w-full max-w-[1220px] px-4 py-10 md:px-7 md:py-14">
-        {/* Header */}
-        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-white/40">Guide Michelin</p>
-            <h1 className="font-title text-[2rem] leading-[1.1] text-white md:text-[2.5rem]">
-              Hôtels de prestige
+      <div className="min-h-screen bg-[#0f0f0f] pt-[4.4rem]">
+        {/* Banner */}
+        <div className="relative overflow-hidden border-b border-white/5 py-14">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
+          <div className="relative mx-auto max-w-[1220px] px-4 md:px-7">
+            <Link
+              to="/"
+              className="mb-6 inline-flex items-center gap-2 text-xs text-white/40 hover:text-white/70 transition"
+            >
+              ← Accueil
+            </Link>
+            <p className="font-title mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+              Guide Michelin
+            </p>
+            <h1 className="font-title text-4xl font-semibold text-white md:text-5xl">
+              Hôtels
             </h1>
             <p className="mt-2 text-sm text-white/40">
               {michelinHotels.length} établissements sélectionnés par le Guide Michelin
             </p>
           </div>
-          <Link
-            to="/"
-            className="rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
-          >
-            Retour à l'accueil
-          </Link>
         </div>
 
-        {/* Search */}
-        <div className="mb-8 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
-          <Search className="size-4 shrink-0 text-white/40" />
-          <input
-            type="text"
-            placeholder="Rechercher un hôtel ou une destination..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
-          />
-          {search && (
-            <span className="text-xs text-white/30">{filtered.length} résultat{filtered.length !== 1 ? "s" : ""}</span>
+        {/* Content */}
+        <div className="mx-auto max-w-[1220px] px-4 py-10 md:px-7">
+          {/* Search */}
+          <div className="mb-8 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+            <Search className="size-4 shrink-0 text-white/40" />
+            <input
+              type="text"
+              placeholder="Rechercher un hôtel ou une destination..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+            />
+            {search && (
+              <span className="text-xs text-white/30">
+                {filtered.length} résultat{filtered.length !== 1 ? "s" : ""}
+              </span>
+            )}
+          </div>
+
+          {/* Grid */}
+          {filtered.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filtered.map((hotel) => (
+                <HotelCard key={hotel.url} hotel={hotel} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-white/10 bg-white/[0.03]">
+              <p className="font-medium text-white/30">Aucun hôtel trouvé pour « {search} »</p>
+            </div>
           )}
         </div>
-
-        {/* Grid */}
-        {filtered.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((hotel) => (
-              <HotelCard key={hotel.url} hotel={hotel} />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-white/10 bg-white/[0.03]">
-            <p className="font-medium text-white/30">Aucun hôtel trouvé pour « {search} »</p>
-          </div>
-        )}
-      </main>
-    </div>
+      </div>
+    </>
   );
 }
 

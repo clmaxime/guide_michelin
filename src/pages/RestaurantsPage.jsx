@@ -4,7 +4,6 @@ import { ArrowLeft, ArrowRight, Locate, MapPin, Search, X } from "lucide-react";
 import { MichelinStars } from "@/components/MichelinStars";
 import michelinStarUrl from "@/assets/michelin-star.svg";
 import { restaurantApi } from "@/lib/api";
-import { useUiStore } from "@/store/ui-store";
 import HeaderSection from "@/sections/HeaderSection";
 
 /* ── helpers ─────────────────────────────────────────── */
@@ -221,15 +220,10 @@ function SkeletonCard() {
 const DEFAULT_FILTERS = { search: "", distinction: undefined, lat: undefined, lng: undefined, range: 10 };
 
 export default function RestaurantsPage() {
-  const setScrolled = useUiStore((s) => s.setScrolled);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const debounceRef = useRef(null);
-
-  useEffect(() => {
-    setScrolled(true);
-  }, [setScrolled]);
 
   const fetch = useCallback((params) => {
     setLoading(true);

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useContentStore } from "@/store/content-store";
@@ -11,8 +11,14 @@ import { UserMenu } from "@/components/auth/UserMenu";
 function HeaderSection() {
   const headerLinks = useContentStore((state) => state.headerLinks);
   const scrolled = useUiStore((state) => state.scrolled);
+  const setScrolled = useUiStore((state) => state.setScrolled);
   const user = useAuthStore((s) => s.user);
   const [showAuth, setShowAuth] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setScrolled(false);
+  }, [location.pathname]);
 
   const textColor = scrolled ? "text-foreground" : "text-white";
 

@@ -51,14 +51,14 @@ function ItineraryPage() {
     }
 
     if (!hasValidCoordinates) {
-      setErrorMessage("CoordonnÃ©es invalides. Lance une nouvelle recherche depuis la page d'accueil.");
+      setErrorMessage("Coordonnées invalides. Lance une nouvelle recherche depuis la page d'accueil.");
       return;
     }
 
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/streets-v12",
+      style: "mapbox://styles/mapbox/dark-v11",
       center: [from.lng, from.lat],
       zoom: 11,
     });
@@ -81,7 +81,7 @@ function ItineraryPage() {
       try {
         const route = await getRoute(from, to, controller.signal);
         if (!route) {
-          setErrorMessage("Aucun itinÃ©raire trouvÃ© pour ces adresses.");
+          setErrorMessage("Aucun itinéraire trouvé pour ces adresses.");
           return;
         }
 
@@ -127,7 +127,7 @@ function ItineraryPage() {
         }
       } catch (error) {
         if (error.name !== "AbortError") {
-          setErrorMessage("Impossible de calculer l'itinÃ©raire.");
+          setErrorMessage("Impossible de calculer l'itinéraire.");
         }
       }
     };
@@ -145,40 +145,40 @@ function ItineraryPage() {
   return (
     <>
       <HeaderSection />
-      <main className="min-h-screen bg-[#f6f6f6] pt-[4.4rem]">
+      <main className="min-h-screen bg-[#0f0f0f] pt-[4.4rem]">
         <section className="mx-auto w-full max-w-[1220px] px-4 py-8 md:px-7 md:py-10">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#7a7a7a]">Navigation</p>
-              <h1 className="font-title text-3xl text-[#111111]">ItinÃ©raire personnalisÃ©</h1>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-primary">Navigation</p>
+              <h1 className="font-title text-3xl text-white">Itinéraire personnalisé</h1>
             </div>
-            <Link className={buttonVariants({ className: "h-10 rounded-lg" })} to="/">
-              Retour Ã  l'accueil
+            <Link className={buttonVariants({ className: "h-10 rounded-lg border border-white/20 bg-white/10 text-white hover:bg-white/20" })} to="/">
+              Retour à l'accueil
             </Link>
           </div>
 
-          <div className="mb-4 grid gap-3 rounded-xl border border-[#e6e6e6] bg-white p-4 shadow-sm md:grid-cols-3">
+          <div className="mb-4 grid gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-4 shadow-sm md:grid-cols-3 backdrop-blur-md">
             <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-[#7a7a7a]">Point A</p>
-              <p className="text-sm text-[#1f1f1f]">{from.label}</p>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-white/50">Point A</p>
+              <p className="text-sm text-white/90">{from.label}</p>
             </div>
             <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-[#7a7a7a]">Point B</p>
-              <p className="text-sm text-[#1f1f1f]">{to.label}</p>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-white/50">Point B</p>
+              <p className="text-sm text-white/90">{to.label}</p>
             </div>
             <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-[#7a7a7a]">Estimation</p>
-              <p className="text-sm font-medium text-[#1f1f1f]">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-white/50">Estimation</p>
+              <p className="text-sm font-medium text-white">
                 {routeInfo ? `${routeInfo.distanceKm.toFixed(1)} km - ${Math.round(routeInfo.durationMin)} min` : "Calcul en cours..."}
               </p>
             </div>
           </div>
 
           {errorMessage && (
-            <div className="mb-4 rounded-xl border border-[#ffc8d1] bg-[#fff4f6] px-4 py-3 text-sm text-[#9c1030]">{errorMessage}</div>
+            <div className="mb-4 rounded-xl border border-[#ffc8d1] bg-[#3a141c] px-4 py-3 text-sm text-[#ffbcc8]">{errorMessage}</div>
           )}
 
-          <div className="overflow-hidden rounded-2xl border border-[#e6e6e6] bg-white shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-sm">
             <div className="h-[65vh] min-h-[360px] w-full" ref={mapContainerRef} />
           </div>
         </section>

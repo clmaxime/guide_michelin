@@ -21,7 +21,7 @@ function SwipePlaceholder({ disabled, onSwipeLeft, onSwipeRight, lastSwipe }) {
       </Button>
       {lastSwipe ? (
         <p className="col-span-2 text-center text-xs uppercase tracking-[0.08em] text-white/60">
-          Dernier swipe: {lastSwipe === "right" ? "droite" : "gauche"}
+          Dernier swipe : {lastSwipe === "right" ? "droite" : "gauche"}
         </p>
       ) : null}
     </div>

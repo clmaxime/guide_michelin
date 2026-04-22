@@ -3,6 +3,9 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Link, useSearchParams } from "react-router-dom";
 import { buttonVariants } from "@/components/ui/button";
+import HeaderSection from "@/sections/HeaderSection";
+import FooterSection from "@/sections/FooterSection";
+import { useUiStore } from "@/store/ui-store";
 import { getRoute, MAPBOX_ACCESS_TOKEN } from "@/lib/mapbox";
 
 function parseCoordinate(value) {
@@ -15,6 +18,11 @@ function ItineraryPage() {
   const [searchParams] = useSearchParams();
   const [routeInfo, setRouteInfo] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const setScrolled = useUiStore((state) => state.setScrolled);
+
+  useEffect(() => {
+    setScrolled(true);
+  }, [setScrolled]);
 
   const from = useMemo(
     () => ({
@@ -38,7 +46,7 @@ function ItineraryPage() {
 
   useEffect(() => {
     if (!MAPBOX_ACCESS_TOKEN) {
-      setErrorMessage("Token Mapbox introuvable. Ajoute `VITE_MAPBOX_ACCESS_TOKEN` dans `.env`.");
+      setErrorMessage("Token Mapbox introuvable. Ajoute VITE_MAPBOX_ACCESS_TOKEN dans le fichier .env.");
       return;
     }
 
@@ -135,44 +143,48 @@ function ItineraryPage() {
   }, [from, to, hasValidCoordinates]);
 
   return (
-    <main className="min-h-screen bg-[#f6f6f6] px-4 py-8 md:px-7 md:py-10">
-      <div className="mx-auto w-full max-w-[1220px]">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#7a7a7a]">Itinéraire</p>
-            <h1 className="font-title text-3xl text-[#111111]">Trajet entre vos deux points</h1>
+    <>
+      <HeaderSection />
+      <main className="min-h-screen bg-[#f6f6f6] pt-[4.4rem]">
+        <section className="mx-auto w-full max-w-[1220px] px-4 py-8 md:px-7 md:py-10">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#7a7a7a]">Navigation</p>
+              <h1 className="font-title text-3xl text-[#111111]">Itinéraire personnalisé</h1>
+            </div>
+            <Link className={buttonVariants({ className: "h-10 rounded-lg" })} to="/">
+              Retour à l'accueil
+            </Link>
           </div>
-          <Link className={buttonVariants({ className: "h-10 rounded-lg" })} to="/">
-            Retour à l'accueil
-          </Link>
-        </div>
 
-        <div className="mb-4 grid gap-3 rounded-xl border border-[#e6e6e6] bg-white p-4 shadow-sm md:grid-cols-3">
-          <div>
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-[#7a7a7a]">Point A</p>
-            <p className="text-sm text-[#1f1f1f]">{from.label}</p>
+          <div className="mb-4 grid gap-3 rounded-xl border border-[#e6e6e6] bg-white p-4 shadow-sm md:grid-cols-3">
+            <div>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-[#7a7a7a]">Point A</p>
+              <p className="text-sm text-[#1f1f1f]">{from.label}</p>
+            </div>
+            <div>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-[#7a7a7a]">Point B</p>
+              <p className="text-sm text-[#1f1f1f]">{to.label}</p>
+            </div>
+            <div>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-[#7a7a7a]">Estimation</p>
+              <p className="text-sm font-medium text-[#1f1f1f]">
+                {routeInfo ? `${routeInfo.distanceKm.toFixed(1)} km - ${Math.round(routeInfo.durationMin)} min` : "Calcul en cours..."}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-[#7a7a7a]">Point B</p>
-            <p className="text-sm text-[#1f1f1f]">{to.label}</p>
-          </div>
-          <div>
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-[#7a7a7a]">Estimation</p>
-            <p className="text-sm font-medium text-[#1f1f1f]">
-              {routeInfo ? `${routeInfo.distanceKm.toFixed(1)} km - ${Math.round(routeInfo.durationMin)} min` : "Calcul en cours..."}
-            </p>
-          </div>
-        </div>
 
-        {errorMessage && (
-          <div className="mb-4 rounded-xl border border-[#ffc8d1] bg-[#fff4f6] px-4 py-3 text-sm text-[#9c1030]">{errorMessage}</div>
-        )}
+          {errorMessage && (
+            <div className="mb-4 rounded-xl border border-[#ffc8d1] bg-[#fff4f6] px-4 py-3 text-sm text-[#9c1030]">{errorMessage}</div>
+          )}
 
-        <div className="overflow-hidden rounded-2xl border border-[#e6e6e6] bg-white shadow-sm">
-          <div className="h-[65vh] min-h-[360px] w-full" ref={mapContainerRef} />
-        </div>
-      </div>
-    </main>
+          <div className="overflow-hidden rounded-2xl border border-[#e6e6e6] bg-white shadow-sm">
+            <div className="h-[65vh] min-h-[360px] w-full" ref={mapContainerRef} />
+          </div>
+        </section>
+      </main>
+      <FooterSection />
+    </>
   );
 }
 

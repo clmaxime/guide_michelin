@@ -1,18 +1,22 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useContentStore } from "@/store/content-store";
 import { useUiStore } from "@/store/ui-store";
 import { useAuthStore } from "@/store/auth-store";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { UserMenu } from "@/components/auth/UserMenu";
 
 function HeaderSection() {
-  const headerLinks = useContentStore((state) => state.headerLinks);
   const scrolled = useUiStore((state) => state.scrolled);
   const user = useAuthStore((s) => s.user);
   const [showAuth, setShowAuth] = useState(false);
+  const navLinks = [
+    { label: "Restaurants", to: "/restaurants" },
+    { label: "Hôtels", to: "/hotels" },
+    { label: "Inspiration", to: "/discover" },
+    { label: "Destinations", to: "/" },
+  ];
 
   const textColor = scrolled ? "text-foreground" : "text-white";
 
@@ -29,26 +33,37 @@ function HeaderSection() {
           </Link>
 
           <nav aria-label="Navigation principale" className="hidden gap-5 md:flex">
-            {headerLinks.map((item) => (
-              <a
+            {navLinks.map((item) => (
+              <Link
                 className={`text-[0.95rem] font-semibold ${textColor}`}
-                href={`/#${item.toLowerCase()}`}
-                key={item}
+                key={item.label}
+                to={item.to}
               >
-                {item}
-              </a>
+                {item.label}
+              </Link>
             ))}
           </nav>
 
           <div className="flex items-center gap-3">
-            <Button
-              aria-label="Favoris"
-              className="h-[2.1rem] w-[2.1rem] rounded-full bg-black/80 p-0 text-white"
-              size="icon"
-              type="button"
-            >
-              <Heart className="size-4" />
-            </Button>
+            {user ? (
+              <Link
+                aria-label="Favoris"
+                className="inline-flex h-[2.1rem] w-[2.1rem] items-center justify-center rounded-full bg-black/80 p-0 text-white"
+                to="/favorites"
+              >
+                <Heart className="size-4" />
+              </Link>
+            ) : (
+              <Button
+                aria-label="Favoris"
+                className="h-[2.1rem] w-[2.1rem] rounded-full bg-black/80 p-0 text-white"
+                onClick={() => setShowAuth(true)}
+                size="icon"
+                type="button"
+              >
+                <Heart className="size-4" />
+              </Button>
+            )}
 
             {user ? (
               <UserMenu />
@@ -64,7 +79,7 @@ function HeaderSection() {
                   className={buttonVariants({ className: "rounded-full px-4 py-1.5 text-[0.82rem]" })}
                   to="/discover"
                 >
-                  Discover
+                  Découvrir
                 </Link>
               </>
             )}

@@ -4,7 +4,7 @@ function DishCard({ dish }) {
   if (!dish) {
     return (
       <div className="flex min-h-[28rem] items-center justify-center rounded-3xl border border-white/15 bg-white/5 p-8 text-center text-white/75">
-        Aucun resultat avec ces filtres. Elargis la recherche pour continuer le swipe.
+        Aucun résultat avec ces filtres. Élargis la recherche pour continuer le swipe.
       </div>
     );
   }
@@ -28,7 +28,7 @@ function DishCard({ dish }) {
             </span>
           ))}
         </div>
-        <p className="text-xs font-medium uppercase tracking-[0.08em] text-[#ffc4ce]">Preparation estimee: {dish.prepTime} min</p>
+        <p className="text-xs font-medium uppercase tracking-[0.08em] text-[#ffc4ce]">Préparation estimée: {dish.prepTime} min</p>
       </div>
     </article>
   );

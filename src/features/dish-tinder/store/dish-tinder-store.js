@@ -3,13 +3,11 @@ import { create } from "zustand";
 export const useDishTinderStore = create((set) => ({
   selectedCuisine: "all",
   selectedMood: "all",
-  maxPrepTime: 45,
   lastSwipe: null,
   likedIds: [],
   dislikedIds: [],
   setSelectedCuisine: (value) => set({ selectedCuisine: value }),
   setSelectedMood: (value) => set({ selectedMood: value }),
-  setMaxPrepTime: (value) => set({ maxPrepTime: value }),
   swipeDish: (dishId, direction) =>
     set((state) => {
       const isLike = direction === "right";
@@ -23,7 +21,6 @@ export const useDishTinderStore = create((set) => ({
     set({
       selectedCuisine: "all",
       selectedMood: "all",
-      maxPrepTime: 45,
       lastSwipe: null,
       likedIds: [],
       dislikedIds: [],

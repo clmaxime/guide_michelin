@@ -43,11 +43,13 @@ export const categoryCards = [
     image: cardRestaurant,
     title: "Restaurants",
     text: "Explorez les tables etoilees et bistronomiques.",
+    href: "/restaurants",
   },
   {
     image: cardHotel,
     title: "Hotels",
     text: "Retrouvez les adresses remarquables et design.",
+    href: "/hotels",
   },
 ];
 

@@ -3,6 +3,7 @@ import ArticlesSection from "../sections/ArticlesSection";
 import CategoriesSection from "../sections/CategoriesSection";
 import DestinationsSection from "../sections/DestinationsSection";
 import FeaturedHotelsSection from "../sections/FeaturedHotelsSection";
+import FeaturedRestaurantsSection from "../sections/FeaturedRestaurantsSection";
 import FooterSection from "../sections/FooterSection";
 import HeaderSection from "../sections/HeaderSection";
 import HeroSection from "../sections/HeroSection";
@@ -28,6 +29,7 @@ function HomePage() {
       <HeaderSection />
       <main>
         <HeroSection />
+        <FeaturedRestaurantsSection />
         <FeaturedHotelsSection />
         <TinderTeaserSection />
         <CategoriesSection />

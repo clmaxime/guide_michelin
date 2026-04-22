@@ -4,6 +4,8 @@ import HomePage from "./pages/HomePage";
 import HotelsPage from "./pages/HotelsPage";
 import ItineraryPage from "./pages/ItineraryPage";
 import ProfilePage from "./pages/ProfilePage";
+import RestaurantDetailPage from "./pages/RestaurantDetailPage";
+import RestaurantsPage from "./pages/RestaurantsPage";
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
       <Route path="/hotels" element={<HotelsPage />} />
       <Route path="/itinerary" element={<ItineraryPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/restaurants" element={<RestaurantsPage />} />
+      <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

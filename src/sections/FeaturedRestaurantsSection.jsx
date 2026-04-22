@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Star, MapPin, ArrowRight } from "lucide-react";
+import { Star, MapPin, ArrowRight, Search } from "lucide-react";
 import { useRestaurantStore } from "@/store/restaurant-store";
 
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
@@ -90,7 +90,7 @@ function FeaturedRestaurantsSection() {
     <section className="bg-[#0f0f0f] py-16 md:py-20 xl:py-24" id="restaurants">
       <div className="mx-auto w-full max-w-[1220px] px-4 md:px-7">
         {/* Header */}
-        <div className="mb-10 flex items-end justify-between">
+        <div className="mb-10 flex items-end justify-between gap-6">
           <div>
             <p className="font-title mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               Nos Restaurants
@@ -102,6 +102,13 @@ function FeaturedRestaurantsSection() {
               Une sélection d'adresses étoilées, choisies pour l'excellence de leur cuisine.
             </p>
           </div>
+          <Link
+            to="/restaurants"
+            className="shrink-0 flex items-center gap-2 rounded-full backdrop-blur-md bg-white/10 border border-white/20 px-4 py-2.5 text-sm text-white/80 font-medium hover:bg-white/20 transition"
+          >
+            <Search className="size-4" />
+            Rechercher
+          </Link>
         </div>
 
         {/* Grid */}

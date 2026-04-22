@@ -1,13 +1,10 @@
 import { useEffect } from "react";
 import ArticlesSection from "../sections/ArticlesSection";
-import CategoriesSection from "../sections/CategoriesSection";
-import DestinationsSection from "../sections/DestinationsSection";
 import FeaturedHotelsSection from "../sections/FeaturedHotelsSection";
 import FeaturedRestaurantsSection from "../sections/FeaturedRestaurantsSection";
 import FooterSection from "../sections/FooterSection";
 import HeaderSection from "../sections/HeaderSection";
 import HeroSection from "../sections/HeroSection";
-import InspirationSection from "../sections/InspirationSection";
 import TinderTeaserSection from "../sections/TinderTeaserSection";
 import { useUiStore } from "@/store/ui-store";
 
@@ -32,10 +29,7 @@ function HomePage() {
         <FeaturedRestaurantsSection />
         <FeaturedHotelsSection />
         <TinderTeaserSection />
-        <CategoriesSection />
-        <InspirationSection />
         <ArticlesSection />
-        <DestinationsSection />
       </main>
       <FooterSection />
     </>

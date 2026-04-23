@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -86,73 +86,10 @@ function parseCoordinate(value) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-
-function RestaurantCard({ restaurant }) {
-  const image = restaurant.imageUrls?.[0];
-  const todayIndex = new Date().getDay();
-  const todayKey = DAY_ORDER[todayIndex === 0 ? 6 : todayIndex - 1];
-  const todayHoraire = restaurant.horaires?.find((h) => h.jour === todayKey);
-
-  return (
-    <Link
-      to={`/restaurants/${restaurant.id}`}
-      className="group relative flex aspect-[3/4] overflow-hidden rounded-2xl"
-    >
-      {image ? (
-        <img
-          src={image}
-          alt={restaurant.nom}
-          className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
-        />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-700 to-neutral-900" />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-
-      <div className="absolute left-3 top-3 rounded-full backdrop-blur-md bg-white/10 border border-white/20 px-2.5 py-1">
-        <MichelinStars count={restaurant.distinction} />
-      </div>
-
-      {restaurant.distance != null && (
-        <div className="absolute right-3 top-3 rounded-full backdrop-blur-md bg-white/10 border border-white/20 px-2.5 py-1 text-xs text-white/80 font-medium">
-          {restaurant.distance} km
-        </div>
-      )}
-
-      <div className="absolute bottom-0 left-0 right-0 backdrop-blur-md bg-white/10 border-t border-white/15 p-4 transition-all duration-300 group-hover:bg-white/15">
-        <h3 className="font-title text-white text-lg font-semibold leading-tight mb-1">
-          {restaurant.nom}
-        </h3>
-        <div className="flex items-start gap-1 mb-2">
-          <MapPin className="size-3 text-white/50 mt-0.5 shrink-0" />
-          <p className="text-white/50 text-xs line-clamp-1">{restaurant.adresse}</p>
-        </div>
-        {todayHoraire?.creneaux?.length > 0 ? (
-          <p className="text-xs text-emerald-400 font-medium">
-            Ouvert · {todayHoraire.creneaux[0].ouverture}–{todayHoraire.creneaux[0].fermeture}
-          </p>
-        ) : (
-          <p className="text-xs text-white/30">Horaires non renseignés</p>
-        )}
-        <div className="mt-3 flex items-center gap-1 text-xs text-white/60 group-hover:text-white transition-colors">
-          Voir la fiche <ArrowRight className="size-3" />
-        </div>
-      </div>
-    </Link>
-  );
-}
-
 function ItineraryPage() {
-  const navigate = useNavigate();
   const mapContainerRef = useRef(null);
-  const mapRef = useRef(null);
-  const restaurantMarkersRef = useRef([]);
-  const routeCoordsRef = useRef(null);
-
   const [searchParams] = useSearchParams();
   const [routeInfo, setRouteInfo] = useState(null);
-  const [restaurants, setRestaurants] = useState([]);
-  const [restaurantsLoading, setRestaurantsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [appliedDistance, setAppliedDistance] = useState(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
@@ -169,18 +106,15 @@ function ItineraryPage() {
     return v >= 1 && v <= 100 ? v : 5;
   }, [searchParams]);
 
-  const [maxDistanceKm, setMaxDistanceKm] = useState(initialDistance);
-
-  // Keep slider in sync when URL changes (after edit submit)
   useEffect(() => {
-    setMaxDistanceKm(initialDistance);
-  }, [initialDistance]);
+    setScrolled(true);
+  }, [setScrolled]);
 
   const from = useMemo(
     () => ({
       lng: parseCoordinate(searchParams.get("fromLng")),
       lat: parseCoordinate(searchParams.get("fromLat")),
-      label: searchParams.get("fromLabel") ?? "Lieu de départ",
+      label: searchParams.get("fromLabel") ?? "Point A",
     }),
     [searchParams],
   );
@@ -189,7 +123,7 @@ function ItineraryPage() {
     () => ({
       lng: parseCoordinate(searchParams.get("toLng")),
       lat: parseCoordinate(searchParams.get("toLat")),
-      label: searchParams.get("toLabel") ?? "Lieu d'arrivée",
+      label: searchParams.get("toLabel") ?? "Point B",
     }),
     [searchParams],
   );
@@ -336,16 +270,11 @@ function ItineraryPage() {
       setErrorMessage("Token Mapbox introuvable. Ajoute VITE_MAPBOX_ACCESS_TOKEN dans le fichier .env.");
       return;
     }
+
     if (!hasValidCoordinates) {
-      setErrorMessage("Coordonn�es invalides. Lance une nouvelle recherche depuis la page d'accueil.");
+      setErrorMessage("Coordonnées invalides. Lance une nouvelle recherche depuis la page d'accueil.");
       return;
     }
-
-    setErrorMessage("");
-    setRouteInfo(null);
-    setRestaurants([]);
-    setAppliedDistance(null);
-    routeCoordsRef.current = null;
 
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
     const map = new mapboxgl.Map({
@@ -354,18 +283,17 @@ function ItineraryPage() {
       center: [from.lng, from.lat],
       zoom: 11,
     });
-    mapRef.current = map;
 
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     const originMarker = new mapboxgl.Marker({ color: "#1f8b4c" })
       .setLngLat([from.lng, from.lat])
-      .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(`Départ : ${from.label}`))
+      .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(`Point A: ${from.label}`))
       .addTo(map);
 
     const destinationMarker = new mapboxgl.Marker({ color: "#e60023" })
       .setLngLat([to.lng, to.lat])
-      .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(`Arrivée : ${to.label}`))
+      .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(`Point B: ${to.label}`))
       .addTo(map);
 
     const controller = new AbortController();
@@ -374,39 +302,53 @@ function ItineraryPage() {
       try {
         const route = await getRoute(from, to, controller.signal);
         if (!route) {
-          setErrorMessage("Aucun itin�raire trouv� pour ces adresses.");
+          setErrorMessage("Aucun itinéraire trouvé pour ces adresses.");
           return;
         }
 
-        setRouteInfo({ distanceKm: route.distance / 1000, durationMin: route.duration / 60 });
-        routeCoordsRef.current = route.geometry.coordinates;
+        setRouteInfo({
+          distanceKm: route.distance / 1000,
+          durationMin: route.duration / 60,
+        });
 
-        const renderRoute = async () => {
+        const renderRoute = () => {
           map.addSource("route", {
             type: "geojson",
-            data: { type: "Feature", geometry: route.geometry },
+            data: {
+              type: "Feature",
+              geometry: route.geometry,
+            },
           });
+
           map.addLayer({
             id: "route-line",
             type: "line",
             source: "route",
-            layout: { "line-join": "round", "line-cap": "round" },
-            paint: { "line-color": "#e60023", "line-width": 5, "line-opacity": 0.9 },
+            layout: {
+              "line-join": "round",
+              "line-cap": "round",
+            },
+            paint: {
+              "line-color": "#e60023",
+              "line-width": 5,
+              "line-opacity": 0.9,
+            },
           });
 
           const bounds = new mapboxgl.LngLatBounds([from.lng, from.lat], [from.lng, from.lat]);
           bounds.extend([to.lng, to.lat]);
-          route.geometry.coordinates.forEach((c) => bounds.extend(c));
+          route.geometry.coordinates.forEach((coordinate) => bounds.extend(coordinate));
           map.fitBounds(bounds, { padding: 54, maxZoom: 14 });
-
-          await fetchRestaurants(route.geometry.coordinates, initialDistance);
         };
 
-        if (map.isStyleLoaded()) renderRoute();
-        else map.on("load", renderRoute);
+        if (map.isStyleLoaded()) {
+          renderRoute();
+        } else {
+          map.on("load", renderRoute);
+        }
       } catch (error) {
         if (error.name !== "AbortError") {
-          setErrorMessage("Impossible de calculer l'itin�raire.");
+          setErrorMessage("Impossible de calculer l'itinéraire.");
         }
       }
     };
@@ -417,9 +359,6 @@ function ItineraryPage() {
       controller.abort();
       originMarker.remove();
       destinationMarker.remove();
-      restaurantMarkersRef.current.forEach((m) => m.remove());
-      restaurantMarkersRef.current = [];
-      mapRef.current = null;
       map.remove();
     };
   }, [from, to, hasValidCoordinates]);
@@ -553,16 +492,11 @@ function ItineraryPage() {
               Retour à l'accueil
             </Link>
           </div>
-        </div>
 
-        {/* Edit route form */}
-        {isEditingRoute && (
-          <div className="relative z-10 mb-4 rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-sm">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-semibold text-white/80">Modifier le trajet</p>
-              <button onClick={() => setIsEditingRoute(false)} className="rounded-md p-1 text-white/40 hover:text-white">
-                <X className="size-4" />
-              </button>
+          <div className="mb-4 grid gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-4 shadow-sm md:grid-cols-3 backdrop-blur-md">
+            <div>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-white/50">Point A</p>
+              <p className="text-sm text-white/90">{from.label}</p>
             </div>
             <form onSubmit={handleEditSubmit} className="relative grid gap-2 md:grid-cols-[1fr_1fr_auto]">
               {/* Départ */}
@@ -660,15 +594,8 @@ function ItineraryPage() {
         <section className="mt-8">
           <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h2 className="font-title text-2xl text-white">Restaurants sur le trajet</h2>
-              {!restaurantsLoading && appliedDistance !== null && (
-                <span className="text-sm text-white/40">
-                  {restaurants.length === 0
-                    ? "Aucun"
-                    : `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""}`}{" "}
-                  à moins de {appliedDistance} km
-                </span>
-              )}
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-white/50">Point B</p>
+              <p className="text-sm text-white/90">{to.label}</p>
             </div>
 
             <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
@@ -697,30 +624,13 @@ function ItineraryPage() {
             </div>
           </div>
 
-          {restaurantsLoading ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="aspect-[3/4] rounded-2xl bg-white/5 border border-white/10 animate-pulse" />
-              ))}
-            </div>
-          ) : restaurants.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {restaurants.map((r) => (
-                <RestaurantCard key={r.id} restaurant={r} />
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-white/10 bg-white/[0.03]">
-              <div className="mb-3 flex gap-1">
-                {[1, 2, 3].map((i) => (
-                  <Star key={i} className="size-5 text-white/10" />
-                ))}
-              </div>
-              <p className="font-medium text-white/30">
-                Aucun restaurant Michelin à moins de {appliedDistance ?? initialDistance} km du trajet
-              </p>
-            </div>
+          {errorMessage && (
+            <div className="mb-4 rounded-xl border border-[#ffc8d1] bg-[#3a141c] px-4 py-3 text-sm text-[#ffbcc8]">{errorMessage}</div>
           )}
+
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-sm">
+            <div className="h-[65vh] min-h-[360px] w-full" ref={mapContainerRef} />
+          </div>
         </section>
       </div>
       </main>

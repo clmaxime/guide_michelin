@@ -38,20 +38,27 @@ function FeaturedHotelsSection() {
   const randomHotels = useMemo(() => shuffle(michelinHotels).slice(0, 8), []);
 
   return (
-    <section className="bg-white py-16 md:py-20 xl:py-24" id="hotels">
+    <section className="bg-[#0b0b0d] py-16 md:py-20 xl:py-24" id="hotels">
       <div className="mx-auto w-full max-w-[1220px] px-4 md:px-7">
-        <SectionTitle
-          eyebrow="Hôtels Michelin"
-          subtitle="Une sélection visuelle d'adresses extraites du Guide Michelin pour inspirer les prochaines réservations."
-          title="8 propositions d'hôtels au hasard"
-        />
+        <div className="mb-6">
+          <SectionTitle
+            dark
+            eyebrow="Hôtels Michelin"
+            subtitle="Une sélection visuelle d'adresses extraites du Guide Michelin pour inspirer les prochaines réservations."
+            title="8 propositions d'hôtels au hasard"
+          />
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {randomHotels.map((hotel) => (
-            <Card className="overflow-hidden rounded-2xl transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(17,17,17,0.12)]" key={hotel.url}>
+            <Card
+              className="overflow-hidden rounded-2xl border border-white/12 bg-white/[0.05] text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(0,0,0,0.45)]"
+              key={hotel.url}
+            >
               <img alt={hotel.name} className="h-48 w-full object-cover" loading="lazy" src={hotel.image} />
               <CardContent className="p-4 pt-4">
-                <CardTitle className="mb-1 line-clamp-2 text-[1.15rem]">{hotel.name}</CardTitle>
-                <p className="mb-3 text-sm text-muted-foreground">{formatLocation(hotel.locationSlug)}</p>
+                <CardTitle className="mb-1 line-clamp-2 text-[1.15rem] text-white">{hotel.name}</CardTitle>
+                <p className="mb-3 text-sm text-white/60">{formatLocation(hotel.locationSlug)}</p>
                 <a
                   className="text-sm font-semibold text-primary hover:underline"
                   href={hotel.url}
@@ -64,8 +71,12 @@ function FeaturedHotelsSection() {
             </Card>
           ))}
         </div>
+
         <div className="mt-8 text-center">
-          <Link className={buttonVariants({ className: "h-11 rounded-full px-8 text-sm font-semibold" })} to="/hotels">
+          <Link
+            className={buttonVariants({ className: "h-11 rounded-full border border-white/20 bg-white/10 px-8 text-sm font-semibold text-white hover:bg-white/20" })}
+            to="/hotels"
+          >
             Voir tous les hôtels du Guide Michelin
           </Link>
         </div>

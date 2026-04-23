@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Heart, Locate, MapPin, Search, Star, X } from "lucide-react";
 import { MichelinStars } from "@/components/MichelinStars";
@@ -9,6 +9,16 @@ import HeaderSection from "@/sections/HeaderSection";
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
 const RANGES = [5, 10, 20, 50];
 
+function MichelinStars({ count, size = "sm" }) {
+  const cls = size === "sm" ? "size-3" : "size-3.5";
+  return (
+    <span className="flex items-center gap-0.5">
+      {Array.from({ length: count }).map((_, i) => (
+        <Star key={i} className={`${cls} fill-primary text-primary`} />
+      ))}
+    </span>
+  );
+}
 
 function FilterBar({ filters, onChange }) {
   const [geoLoading, setGeoLoading] = useState(false);
@@ -31,6 +41,7 @@ function FilterBar({ filters, onChange }) {
       setGeoError("Géolocalisation non supportée");
       return;
     }
+
     setGeoLoading(true);
     setGeoError("");
     navigator.geolocation.getCurrentPosition(
@@ -59,15 +70,16 @@ function FilterBar({ filters, onChange }) {
           <div className="relative min-w-[220px] flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
             <input
-              value={filters.search ?? ""}
+              className="w-full rounded-xl border border-white/15 bg-white/10 py-2.5 pl-9 pr-9 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white/30"
               onChange={handleSearch}
               placeholder="Rechercher un restaurant..."
-              className="w-full rounded-xl border border-white/15 bg-white/10 py-2.5 pl-9 pr-9 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white/30"
+              value={filters.search ?? ""}
             />
             {filters.search && (
               <button
-                onClick={() => onChange({ ...filters, search: "" })}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+                onClick={() => onChange({ ...filters, search: "" })}
+                type="button"
               >
                 <X className="size-3.5" />
               </button>
@@ -78,15 +90,17 @@ function FilterBar({ filters, onChange }) {
             <span className="mr-1 text-xs text-white/40">Étoiles</span>
             {[1, 2, 3].map((n) => (
               <button
-                key={n}
-                onClick={() => handleDistinction(n)}
                 className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                   filters.distinction === n
                     ? "border-primary bg-primary text-white"
                     : "border-white/15 bg-white/10 text-white/70 hover:bg-white/15"
                 }`}
+                key={n}
+                onClick={() => handleDistinction(n)}
+                type="button"
               >
-                {n}<img src={michelinStarUrl} alt="★" width={11} height={11} className="opacity-90" />
+                {n}
+                <Star className="size-3 fill-current" />
               </button>
             ))}
           </div>
@@ -97,21 +111,23 @@ function FilterBar({ filters, onChange }) {
                 <div className="flex items-center gap-1">
                   {RANGES.map((km) => (
                     <button
-                      key={km}
-                      onClick={() => handleRange(km)}
                       className={`rounded-full border px-2.5 py-1 text-xs font-medium transition ${
                         filters.range === km
                           ? "border-white/30 bg-white/25 text-white"
                           : "border-white/10 bg-white/10 text-white/50 hover:bg-white/15"
                       }`}
+                      key={km}
+                      onClick={() => handleRange(km)}
+                      type="button"
                     >
                       {km} km
                     </button>
                   ))}
                 </div>
                 <button
-                  onClick={clearGeo}
                   className="flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/20 px-3 py-1.5 text-xs font-medium text-primary transition hover:bg-primary/30"
+                  onClick={clearGeo}
+                  type="button"
                 >
                   <MapPin className="size-3.5" />
                   Autour de moi
@@ -120,9 +136,10 @@ function FilterBar({ filters, onChange }) {
               </>
             ) : (
               <button
-                onClick={requestGeo}
-                disabled={geoLoading}
                 className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 backdrop-blur-md transition hover:bg-white/20 disabled:opacity-50"
+                disabled={geoLoading}
+                onClick={requestGeo}
+                type="button"
               >
                 <Locate className={`size-3.5 ${geoLoading ? "animate-pulse" : ""}`} />
                 {geoLoading ? "Localisation..." : "Autour de moi"}
@@ -131,7 +148,7 @@ function FilterBar({ filters, onChange }) {
           </div>
         </div>
 
-        {geoError && <p className="mt-2 text-xs text-red-400">{geoError}</p>}
+        {geoError ? <p className="mt-2 text-xs text-red-400">{geoError}</p> : null}
       </div>
     </div>
   );
@@ -144,12 +161,12 @@ function RestaurantCard({ restaurant, isFavorite, onToggleFavorite }) {
   const todayHoraire = restaurant.horaires?.find((h) => h.jour === todayKey);
 
   return (
-    <Link to={`/restaurants/${restaurant.id}`} className="group relative flex aspect-[3/4] overflow-hidden rounded-2xl">
+    <Link className="group relative flex aspect-[3/4] overflow-hidden rounded-2xl" to={`/restaurants/${restaurant.id}`}>
       {image ? (
         <img
-          src={image}
           alt={restaurant.nom}
           className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+          src={image}
         />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
@@ -161,11 +178,11 @@ function RestaurantCard({ restaurant, isFavorite, onToggleFavorite }) {
         <MichelinStars count={restaurant.distinction} />
       </div>
 
-      {restaurant.distance != null && (
+      {restaurant.distance != null ? (
         <div className="absolute right-3 top-3 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-xs font-medium text-white/80 backdrop-blur-md">
           {restaurant.distance} km
         </div>
-      )}
+      ) : null}
 
       <button
         className={`absolute ${restaurant.distance != null ? "top-12" : "top-3"} right-3 z-10 inline-flex size-8 items-center justify-center rounded-full border transition ${
@@ -211,12 +228,32 @@ function SkeletonCard() {
 const DEFAULT_FILTERS = { search: "", distinction: undefined, lat: undefined, lng: undefined, range: 10 };
 
 export default function RestaurantsPage() {
+  const setScrolled = useUiStore((s) => s.setScrolled);
+  const user = useAuthStore((s) => s.user);
+
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [restaurants, setRestaurants] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState(new Set());
   const [favoriteMessage, setFavoriteMessage] = useState("");
   const [loading, setLoading] = useState(true);
+
   const debounceRef = useRef(null);
+
+  useEffect(() => {
+    setScrolled(true);
+  }, [setScrolled]);
+
+  useEffect(() => {
+    if (!user) {
+      setFavoriteIds(new Set());
+      return;
+    }
+
+    favoritesApi
+      .listRestaurants()
+      .then((items) => setFavoriteIds(new Set(items.map((item) => item.restaurantId))))
+      .catch(() => setFavoriteIds(new Set()));
+  }, [user]);
 
   const fetch = useCallback((params) => {
     setLoading(true);
@@ -229,7 +266,9 @@ export default function RestaurantsPage() {
 
   function handleFiltersChange(next) {
     setFilters(next);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
     const delay = next.search !== filters.search ? 400 : 0;
     debounceRef.current = setTimeout(() => fetch(next), delay);
   }
@@ -237,7 +276,9 @@ export default function RestaurantsPage() {
   useEffect(() => {
     fetch(DEFAULT_FILTERS);
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
     };
   }, [fetch]);
 
@@ -246,7 +287,9 @@ export default function RestaurantsPage() {
       setFavoriteMessage("Connecte-toi pour ajouter ce restaurant en favoris.");
       return;
     }
+
     const alreadyFavorite = favoriteIds.has(restaurantId);
+
     try {
       if (alreadyFavorite) {
         await favoritesApi.deleteRestaurant(restaurantId);
@@ -273,10 +316,10 @@ export default function RestaurantsPage() {
         <div className="relative overflow-hidden border-b border-white/5 py-14">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
           <div className="relative mx-auto max-w-[1220px] px-4 md:px-7">
-            <Link to="/" className="mb-6 inline-flex items-center gap-2 text-xs text-white/40 transition hover:text-white/70">
+            <Link className="mb-6 inline-flex items-center gap-2 text-xs text-white/40 transition hover:text-white/70" to="/">
               <ArrowLeft className="size-3.5" /> Accueil
             </Link>
-            <p className="font-title mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Guide Michelin</p>
+            <p className="mb-1 font-title text-xs font-semibold uppercase tracking-[0.2em] text-primary">Guide Michelin</p>
             <h1 className="font-title text-4xl font-semibold text-white md:text-5xl">Restaurants</h1>
             <p className="mt-2 text-sm text-white/40">Trouvez votre prochaine table d'exception.</p>
           </div>
@@ -287,12 +330,13 @@ export default function RestaurantsPage() {
         </div>
 
         <div className="mx-auto max-w-[1220px] px-4 py-10 md:px-7">
-          {!loading && (
+          {!loading ? (
             <p className="mb-6 text-xs text-white/30">
               {restaurants.length === 0 ? "Aucun résultat" : `${restaurants.length} restaurant${restaurants.length > 1 ? "s" : ""}`}
               {filters.lat != null && ` · dans un rayon de ${filters.range} km`}
             </p>
-          )}
+          ) : null}
+
           {favoriteMessage ? <p className="mb-4 text-sm text-white/70">{favoriteMessage}</p> : null}
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -300,31 +344,32 @@ export default function RestaurantsPage() {
               ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
               : restaurants.map((r) => (
                   <RestaurantCard
-                    key={r.id}
-                    restaurant={r}
                     isFavorite={favoriteIds.has(r.id)}
+                    key={r.id}
                     onToggleFavorite={handleToggleRestaurantFavorite}
+                    restaurant={r}
                   />
                 ))}
           </div>
 
-          {!loading && restaurants.length === 0 && (
+          {!loading && restaurants.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               <div className="mb-4 flex gap-1">
                 {[1, 2, 3].map((i) => (
-                  <Star key={i} className="size-6 text-white/10" />
+                  <Star className="size-6 text-white/10" key={i} />
                 ))}
               </div>
               <p className="font-title text-xl text-white/30">Aucun restaurant trouvé</p>
               <p className="mt-1 text-sm text-white/20">Essayez d'ajuster vos filtres</p>
               <button
-                onClick={() => handleFiltersChange(DEFAULT_FILTERS)}
                 className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white/70 backdrop-blur-md transition hover:bg-white/15"
+                onClick={() => handleFiltersChange(DEFAULT_FILTERS)}
+                type="button"
               >
                 Réinitialiser les filtres
               </button>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </>

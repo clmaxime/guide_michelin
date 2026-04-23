@@ -1,23 +1,72 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { useAuthStore } from "@/store/auth-store";
+import { useUiStore } from "@/store/ui-store";
+import { dishesApi, favoritesApi } from "@/lib/api";
+import HeaderSection from "@/sections/HeaderSection";
+import FooterSection from "@/sections/FooterSection";
 import DishCard from "../features/dish-tinder/DishCard";
 import SwipePlaceholder from "../features/dish-tinder/SwipePlaceholder";
-import { cuisineOptions, dishOptions, moodOptions } from "../features/dish-tinder/data/dishes";
+import { dishOptions as fallbackDishOptions } from "../features/dish-tinder/data/dishes";
 import { useDishTinderStore } from "../features/dish-tinder/store/dish-tinder-store";
 import { sortDishes } from "../lib/dishAlgo";
 
+const normalizeToken = (value) =>
+  String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+
+function containsToken(sourceArray, target) {
+  const normalizedTarget = normalizeToken(target);
+  if (!normalizedTarget) {
+    return false;
+  }
+
+  return sourceArray.some((item) => {
+    const normalizedItem = normalizeToken(item);
+    return normalizedItem.includes(normalizedTarget) || normalizedTarget.includes(normalizedItem);
+  });
+}
+
+function mapApiDishToUi(dish) {
+  return {
+    id: dish.id,
+    sourceKey: dish.sourceKey,
+    title: dish.title,
+    caption: dish.caption,
+    cuisine: dish.cuisine,
+    mood: dish.mood,
+    prepTime: dish.prepTime,
+    budget: dish.budget,
+    image: dish.image,
+    tags: dish.tags ?? [],
+    vegan: Boolean(dish.vegan),
+    ingredients: dish.ingredients ?? [],
+    allergens: dish.allergens ?? [],
+    restaurantId: dish.restaurantId,
+    restaurantName: dish.restaurantName,
+    restaurantAddress: dish.restaurantAddress,
+    restaurantHours: dish.restaurantHours,
+    restaurantPhone: dish.restaurantPhone,
+  };
+}
+
 function DiscoverPage() {
+  const user = useAuthStore((state) => state.user);
+  const preferences = useAuthStore((state) => state.preferences);
+  const setScrolled = useUiStore((state) => state.setScrolled);
+
   const selectedCuisine = useDishTinderStore((state) => state.selectedCuisine);
   const selectedMood = useDishTinderStore((state) => state.selectedMood);
-  const maxPrepTime = useDishTinderStore((state) => state.maxPrepTime);
   const likedIds = useDishTinderStore((state) => state.likedIds);
   const dislikedIds = useDishTinderStore((state) => state.dislikedIds);
   const lastSwipe = useDishTinderStore((state) => state.lastSwipe);
   const setSelectedCuisine = useDishTinderStore((state) => state.setSelectedCuisine);
   const setSelectedMood = useDishTinderStore((state) => state.setSelectedMood);
-  const setMaxPrepTime = useDishTinderStore((state) => state.setMaxPrepTime);
   const swipeDish = useDishTinderStore((state) => state.swipeDish);
   const resetSession = useDishTinderStore((state) => state.resetSession);
 
@@ -48,7 +97,7 @@ function DiscoverPage() {
   const activeDish = recommendedDishes[0] ?? null;
   const remainingCount = Math.max(recommendedDishes.length - 1, 0);
 
-  const handleSwipe = (direction) => {
+  const handleSwipe = async (direction) => {
     if (!activeDish) {
       return;
     }
@@ -139,8 +188,9 @@ function DiscoverPage() {
             />
           </section>
         </div>
-      </div>
-    </main>
+      </main>
+      <FooterSection />
+    </>
   );
 }
 

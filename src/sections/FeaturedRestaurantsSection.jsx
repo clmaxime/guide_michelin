@@ -1,20 +1,11 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Star, MapPin, ArrowRight, Search } from "lucide-react";
+import { MapPin, ArrowRight, Search } from "lucide-react";
+import { MichelinStars } from "@/components/MichelinStars";
 import { useRestaurantStore } from "@/store/restaurant-store";
 
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
 
-function MichelinStars({ count, size = "sm" }) {
-  const cls = size === "sm" ? "size-3" : "size-4";
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} className={`${cls} fill-primary text-primary`} />
-      ))}
-    </div>
-  );
-}
 
 function RestaurantCard({ restaurant }) {
   const image = restaurant.imageUrls?.[0];

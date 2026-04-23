@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Locate, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MAPBOX_ACCESS_TOKEN, searchPlaces } from "@/lib/mapbox";
+import { MAPBOX_ACCESS_TOKEN, reverseGeocode, searchPlaces } from "@/lib/mapbox";
 import { useContentStore } from "@/store/content-store";
+import { useRestaurantStore } from "@/store/restaurant-store";
 
 function HeroSection() {
   const heroAssets = useContentStore((state) => state.heroAssets);
+  const { restaurants, fetchAll } = useRestaurantStore();
+  const [bgImage, setBgImage] = useState(null);
   const navigate = useNavigate();
   const [points, setPoints] = useState({
     start: { query: "", feature: null },
@@ -17,6 +20,20 @@ function HeroSection() {
   const [suggestions, setSuggestions] = useState([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [maxDistanceKm, setMaxDistanceKm] = useState(5);
+  const [isGeolocating, setIsGeolocating] = useState(false);
+
+  useEffect(() => {
+    if (restaurants.length === 0) fetchAll();
+  }, []);
+
+  useEffect(() => {
+    const withImages = restaurants.filter((r) => r.imageUrls?.length > 0);
+    if (withImages.length === 0) return;
+    const restaurant = withImages[Math.floor(Math.random() * withImages.length)];
+    const images = restaurant.imageUrls;
+    setBgImage(images[Math.floor(Math.random() * images.length)]);
+  }, [restaurants]);
 
   const isTokenMissing = !MAPBOX_ACCESS_TOKEN;
   const activeQuery = points[activeField].query;
@@ -83,6 +100,28 @@ function HeroSection() {
     setSuggestions([]);
   };
 
+  const handleGeolocate = () => {
+    if (!navigator.geolocation) return;
+    setIsGeolocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        try {
+          const feature = await reverseGeocode(coords.longitude, coords.latitude);
+          if (feature) {
+            setPoints((prev) => ({
+              ...prev,
+              start: { query: feature.place_name, feature },
+            }));
+          }
+        } finally {
+          setIsGeolocating(false);
+        }
+      },
+      () => setIsGeolocating(false),
+      { timeout: 8000 },
+    );
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!hasValidPoints) {
@@ -99,6 +138,7 @@ function HeroSection() {
       toLat: String(toLat),
       fromLabel: points.start.feature.place_name,
       toLabel: points.end.feature.place_name,
+      maxDistanceKm: String(maxDistanceKm),
     });
 
     navigate(`/itinerary?${params.toString()}`);
@@ -106,12 +146,12 @@ function HeroSection() {
 
   return (
     <section className="relative grid min-h-screen items-end overflow-x-hidden overflow-y-visible pb-8 pt-[5.5rem] text-white md:pb-12" id="top">
-      <img alt="" className="absolute inset-0 h-full w-full object-cover brightness-[0.85]" src={heroAssets.background} />
+      <img alt="" className="absolute inset-0 h-full w-full object-cover brightness-[0.75] transition-all duration-700" src={bgImage ?? heroAssets.background} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(230,0,35,0.14),rgba(17,17,17,0.52)_45%,rgba(17,17,17,0.7))]" />
       <div className="relative z-10 mx-auto w-full max-w-[1220px] px-4 md:px-7">
         <p className="mb-3 text-[0.85rem] font-bold uppercase tracking-[0.08em] text-[#ffbec7]">Découvrez</p>
         <h1 className="font-title text-[2.2rem] leading-[1.08] sm:text-[2.7rem] md:text-[3.2rem] xl:text-[4.2rem]">
-          Le meilleur de la gastronomie et de l'hospitalité
+          Des cuisines de préstige vous attendent sur la route
         </h1>
         <form
           className="mt-6 grid gap-2 rounded-2xl border border-white/30 bg-white/15 p-2 backdrop-blur-[5px] md:max-w-[52rem] md:grid-cols-[1fr_auto]"
@@ -120,19 +160,31 @@ function HeroSection() {
         >
           <div className="relative">
             <div className="rounded-xl bg-black/25 px-4 py-2.5">
-              <div className="grid gap-2 md:grid-cols-2 md:gap-3">
-                <label className="block rounded-lg md:border-r md:border-white/20 md:pr-3">
-                  <span className="mb-1 block text-[0.68rem] font-semibold uppercase tracking-[0.07em] text-white/80">Point A</span>
-                  <Input
-                    className="h-7 border-0 bg-transparent p-0 text-white placeholder:text-white/75 focus-visible:ring-0"
-                    onChange={(event) => updateQuery("start", event.target.value)}
-                    onFocus={() => setActiveField("start")}
-                    placeholder="Adresse de départ"
-                    value={points.start.query}
-                  />
+              <div className="flex flex-col gap-2 md:flex-row md:items-center">
+                <label className="flex min-w-0 flex-1 flex-col">
+                  <span className="mb-1 block text-[0.68rem] font-semibold uppercase tracking-[0.07em] text-white/80">Lieu de départ</span>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      className="h-7 flex-1 border-0 bg-transparent p-0 text-white placeholder:text-white/75 focus-visible:ring-0"
+                      onChange={(event) => updateQuery("start", event.target.value)}
+                      onFocus={() => setActiveField("start")}
+                      placeholder="Adresse de départ"
+                      value={points.start.query}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleGeolocate}
+                      disabled={isGeolocating || isTokenMissing}
+                      title="Utiliser ma position actuelle"
+                      className="shrink-0 rounded-md p-1 text-white/50 transition hover:text-white disabled:opacity-30"
+                    >
+                      <Locate className={`size-4 ${isGeolocating ? "animate-pulse" : ""}`} />
+                    </button>
+                  </div>
                 </label>
-                <label className="block rounded-lg md:pl-1">
-                  <span className="mb-1 block text-[0.68rem] font-semibold uppercase tracking-[0.07em] text-white/80">Point B</span>
+                <div className="h-px w-full bg-white/20 md:h-9 md:w-px md:shrink-0" />
+                <label className="flex min-w-0 flex-1 flex-col">
+                  <span className="mb-1 block text-[0.68rem] font-semibold uppercase tracking-[0.07em] text-white/80">Lieu d'arrivée</span>
                   <Input
                     className="h-7 border-0 bg-transparent p-0 text-white placeholder:text-white/75 focus-visible:ring-0"
                     onChange={(event) => updateQuery("end", event.target.value)}
@@ -161,33 +213,29 @@ function HeroSection() {
               </div>
             )}
           </div>
-          <Button className="min-h-12 rounded-xl text-base font-bold md:min-w-44" disabled={isTokenMissing || !hasValidPoints} type="submit">
+          <Button className="h-full min-h-12 w-full rounded-xl text-base font-bold md:w-auto md:min-w-44" disabled={isTokenMissing || !hasValidPoints} type="submit">
             <Search className="size-4" />
-            Activer / Rechercher
+            Rechercher
           </Button>
+          <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 backdrop-blur-sm md:col-span-2">
+            <span className="shrink-0 text-[0.68rem] font-semibold uppercase tracking-[0.07em] text-white/80">
+              Écart max au trajet
+            </span>
+            <input
+              type="range"
+              min={1}
+              max={100}
+              value={maxDistanceKm}
+              onChange={(e) => setMaxDistanceKm(Number(e.target.value))}
+              className="flex-1 accent-[#e60023]"
+            />
+            <span className="w-14 shrink-0 text-right text-sm font-semibold text-white">
+              {maxDistanceKm} km
+            </span>
+          </div>
         </form>
         {isTokenMissing && <p className="mt-3 text-sm text-[#ffbec7]">Configuration Mapbox manquante : ajoute `VITE_MAPBOX_ACCESS_TOKEN` dans `.env`.</p>}
         {errorMessage && <p className="mt-3 text-sm text-[#ffbec7]">{errorMessage}</p>}
-      </div>
-      <div className="relative z-10 grid grid-cols-3 gap-2 px-4 md:max-w-[34rem] md:justify-self-end md:pr-7 xl:absolute xl:bottom-[3.3rem] xl:right-0 xl:px-0 xl:pr-8">
-        <img
-          alt="Plat signature"
-          className="h-[5.6rem] w-full rounded-xl object-cover shadow-[0_12px_30px_rgba(17,17,17,0.12)] transition duration-300 hover:scale-[1.03] md:h-32"
-          loading="lazy"
-          src={heroAssets.dish}
-        />
-        <img
-          alt="Accord vin"
-          className="h-[5.6rem] w-full rounded-xl object-cover shadow-[0_12px_30px_rgba(17,17,17,0.12)] transition duration-300 hover:scale-[1.03] md:h-32"
-          loading="lazy"
-          src={heroAssets.wine}
-        />
-        <img
-          alt="Detail de table"
-          className="h-[5.6rem] w-full rounded-xl object-cover shadow-[0_12px_30px_rgba(17,17,17,0.12)] transition duration-300 hover:scale-[1.03] md:h-32"
-          loading="lazy"
-          src={heroAssets.detail}
-        />
       </div>
     </section>
   );

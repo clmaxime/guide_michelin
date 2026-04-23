@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import ArticlesSection from "../sections/ArticlesSection";
 import FeaturedHotelsSection from "../sections/FeaturedHotelsSection";
 import FeaturedRestaurantsSection from "../sections/FeaturedRestaurantsSection";
 import FooterSection from "../sections/FooterSection";
@@ -29,7 +28,6 @@ function HomePage() {
         <FeaturedRestaurantsSection />
         <FeaturedHotelsSection />
         <TinderTeaserSection />
-        <ArticlesSection />
       </main>
       <FooterSection />
     </>

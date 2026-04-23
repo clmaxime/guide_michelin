@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import DiscoverPage from "./pages/DiscoverPage";
+import FavoriteDetailPage from "./pages/FavoriteDetailPage";
+import FavoritesPage from "./pages/FavoritesPage";
 import HomePage from "./pages/HomePage";
 import HotelsPage from "./pages/HotelsPage";
 import ItineraryPage from "./pages/ItineraryPage";
@@ -12,6 +14,8 @@ function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/discover" element={<DiscoverPage />} />
+      <Route path="/favorites" element={<FavoritesPage />} />
+      <Route path="/favorites/:dishId" element={<FavoriteDetailPage />} />
       <Route path="/hotels" element={<HotelsPage />} />
       <Route path="/itinerary" element={<ItineraryPage />} />
       <Route path="/profile" element={<ProfilePage />} />

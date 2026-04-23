@@ -1,26 +1,39 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+﻿import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useContentStore } from "@/store/content-store";
 import { useUiStore } from "@/store/ui-store";
 import { useAuthStore } from "@/store/auth-store";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { UserMenu } from "@/components/auth/UserMenu";
 
+const navLinks = [
+  { label: "Restaurants", href: "/restaurants" },
+  { label: "Hôtels", href: "/hotels" },
+  { label: "Itinéraire", href: "/itinerary" },
+];
+
 function HeaderSection() {
-  const headerLinks = useContentStore((state) => state.headerLinks);
   const scrolled = useUiStore((state) => state.scrolled);
   const user = useAuthStore((s) => s.user);
   const [showAuth, setShowAuth] = useState(false);
 
-  const textColor = scrolled ? "text-foreground" : "text-white";
+  const navLinks = [
+    { label: "Restaurants", to: "/restaurants" },
+    { label: "Hôtels", to: "/hotels" },
+    { label: "Inspiration", to: "/discover" },
+    { label: "Destinations", to: "/" },
+  ];
+
+  const textColor = "text-white";
 
   return (
     <>
       <header
         className={`fixed left-0 top-0 z-20 w-full transition-all duration-300 ${
-          scrolled ? "bg-background/95 shadow-[0_10px_22px_rgba(17,17,17,0.08)]" : "bg-transparent"
+          scrolled
+            ? "border-b border-white/10 bg-[#0b0b0d]/92 shadow-[0_10px_30px_rgba(0,0,0,0.45)] backdrop-blur-md"
+            : "bg-transparent"
         }`}
       >
         <div className="mx-auto flex min-h-[4.4rem] w-full max-w-[1220px] items-center justify-between gap-4 px-4 md:px-7">
@@ -29,34 +42,47 @@ function HeaderSection() {
           </Link>
 
           <nav aria-label="Navigation principale" className="hidden gap-5 md:flex">
-            {headerLinks.map((item) => (
-              <a
+            {navLinks.map((item) => (
+              <Link
                 className={`text-[0.95rem] font-semibold ${textColor}`}
-                href={`/#${item.toLowerCase()}`}
-                key={item}
+                to={item.href}
+                key={item.label}
+                to={item.to}
               >
-                {item}
-              </a>
+                {item.label}
+              </Link>
             ))}
           </nav>
 
           <div className="flex items-center gap-3">
-            <Button
-              aria-label="Favoris"
-              className="h-[2.1rem] w-[2.1rem] rounded-full bg-black/80 p-0 text-white"
-              size="icon"
-              type="button"
-            >
-              <Heart className="size-4" />
-            </Button>
+            {user ? (
+              <Link
+                aria-label="Favoris"
+                className="inline-flex h-[2.1rem] w-[2.1rem] items-center justify-center rounded-full bg-black/80 p-0 text-white"
+                to="/favorites"
+              >
+                <Heart className="size-4" />
+              </Link>
+            ) : (
+              <Button
+                aria-label="Favoris"
+                className="h-[2.1rem] w-[2.1rem] rounded-full bg-black/80 p-0 text-white"
+                onClick={() => setShowAuth(true)}
+                size="icon"
+                type="button"
+              >
+                <Heart className="size-4" />
+              </Button>
+            )}
 
             {user ? (
               <UserMenu />
             ) : (
               <>
                 <button
+                  className={`text-[0.82rem] font-semibold ${textColor} transition-opacity hover:opacity-80`}
                   onClick={() => setShowAuth(true)}
-                  className={`text-[0.82rem] font-semibold ${textColor} hover:opacity-80 transition-opacity`}
+                  type="button"
                 >
                   Se connecter
                 </button>
@@ -64,7 +90,7 @@ function HeaderSection() {
                   className={buttonVariants({ className: "rounded-full px-4 py-1.5 text-[0.82rem]" })}
                   to="/discover"
                 >
-                  Discover
+                  Découvrir
                 </Link>
               </>
             )}

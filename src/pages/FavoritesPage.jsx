@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { favoritesApi } from "@/lib/api";
 import { useAuthStore } from "@/store/auth-store";
 import { useUiStore } from "@/store/ui-store";
-import { formatExperiencePrice } from "@/components/experiences/ExperienceCard";
+import { useDishTinderStore } from "@/features/dish-tinder/store/dish-tinder-store";
 
 function formatCountdown(msLeft) {
   const totalSec = Math.max(0, Math.floor(msLeft / 1000));
@@ -105,17 +105,22 @@ export default function FavoritesPage() {
       if (activeTab === "dishes") {
         await favoritesApi.clear();
         setDishFavorites([]);
+        // Reset Tinder session and redirect to Discover page
+        const resetSession = useDishTinderStore.getState().resetSession;
+        resetSession();
+        navigate("/discover", { replace: true });
       } else if (activeTab === "restaurants") {
         await favoritesApi.clearRestaurants();
         setRestaurantFavorites([]);
-      } else if (activeTab === "hotels") {
+        setMessage("Catégorie réinitialisée.");
+      } else {
         await favoritesApi.clearHotels();
         setHotelFavorites([]);
-      } else {
-        await favoritesApi.clearExperiences();
-        setExperienceFavorites([]);
+        setMessage("Catégorie réinitialisée.");
       }
-      setMessage("Catégorie réinitialisée.");
+      if (activeTab !== "dishes") {
+        setMessage("Catégorie réinitialisée.");
+      }
     } catch {
       setMessage("Impossible de réinitialiser cette catégorie.");
     } finally {

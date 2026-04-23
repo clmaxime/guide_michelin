@@ -2,14 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useAuthStore } from "@/store/auth-store";
-import { useUiStore } from "@/store/ui-store";
-import { dishesApi, favoritesApi } from "@/lib/api";
 import HeaderSection from "@/sections/HeaderSection";
 import FooterSection from "@/sections/FooterSection";
 import DishCard from "../features/dish-tinder/DishCard";
 import SwipePlaceholder from "../features/dish-tinder/SwipePlaceholder";
-import { dishOptions as fallbackDishOptions } from "../features/dish-tinder/data/dishes";
+import { dishOptions } from "../features/dish-tinder/data/dishes";
 import { useDishTinderStore } from "../features/dish-tinder/store/dish-tinder-store";
 import { sortDishes } from "../lib/dishAlgo";
 
@@ -56,9 +53,16 @@ function mapApiDishToUi(dish) {
 }
 
 function DiscoverPage() {
-  const user = useAuthStore((state) => state.user);
-  const preferences = useAuthStore((state) => state.preferences);
-  const setScrolled = useUiStore((state) => state.setScrolled);
+  const [maxPrepTime, setMaxPrepTime] = useState(120);
+
+  const cuisineOptions = useMemo(
+    () => ["all", ...new Set(dishOptions.map((d) => d.cuisine).filter(Boolean))],
+    [],
+  );
+  const moodOptions = useMemo(
+    () => ["all", ...new Set(dishOptions.map((d) => d.mood).filter(Boolean))],
+    [],
+  );
 
   const selectedCuisine = useDishTinderStore((state) => state.selectedCuisine);
   const selectedMood = useDishTinderStore((state) => state.selectedMood);
@@ -124,7 +128,9 @@ function DiscoverPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_15%_10%,#3d121c_0%,#121217_35%,#09090c_75%)] py-12 md:py-16">
+    <>
+      <HeaderSection />
+      <main className="min-h-screen bg-[radial-gradient(circle_at_15%_10%,#3d121c_0%,#121217_35%,#09090c_75%)] py-12 md:py-16">
       <div className="mx-auto w-full max-w-[1220px] px-4 md:px-7">
         <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -176,6 +182,18 @@ function DiscoverPage() {
                 ))}
               </select>
             </label>
+            <label className="mb-3 block">
+              <span className="mb-1 block text-xs text-white/65">Temps de préparation max</span>
+              <select
+                className="h-10 w-full rounded-lg border border-white/20 bg-black/30 px-3 text-sm text-white outline-none"
+                onChange={(e) => setMaxPrepTime(Number(e.target.value))}
+                value={maxPrepTime}
+              >
+                {[15, 30, 60, 90, 120].map((t) => (
+                  <option key={t} value={t}>{t} min</option>
+                ))}
+              </select>
+            </label>
           </aside>
 
           <section className="space-y-4">
@@ -188,6 +206,7 @@ function DiscoverPage() {
             />
           </section>
         </div>
+      </div>
       </main>
       <FooterSection />
     </>

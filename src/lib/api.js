@@ -53,20 +53,44 @@ export const dishesApi = {
   findOne: (id) => apiFetch(`/dishes/${id}`),
 };
 
+export const experiencesApi = {
+  list: (params = {}) => {
+    const qs = new URLSearchParams();
+    if (params.search) qs.set("search", params.search);
+    if (params.category) qs.set("category", params.category);
+    if (params.city) qs.set("city", params.city);
+    if (params.lat != null) qs.set("lat", params.lat);
+    if (params.lng != null) qs.set("lng", params.lng);
+    if (params.range) qs.set("range", params.range);
+    if (params.limit) qs.set("limit", String(params.limit));
+    if (params.featured != null) qs.set("featured", params.featured ? "true" : "false");
+    const query = qs.toString();
+    return apiFetch(`/experiences${query ? `?${query}` : ""}`);
+  },
+  highlights: (limit = 8) => apiFetch(`/experiences/highlights?limit=${limit}`),
+  findOne: (id) => apiFetch(`/experiences/${id}`),
+  findAlongRoute: (body) =>
+    apiFetch("/experiences/along-route", { method: "POST", body: JSON.stringify(body) }),
+};
+
 export const favoritesApi = {
   list: () => apiFetch("/favorites"),
   listDishes: () => apiFetch("/favorites/dishes"),
   listRestaurants: () => apiFetch("/favorites/restaurants"),
   listHotels: () => apiFetch("/favorites/hotels"),
+  listExperiences: () => apiFetch("/favorites/experiences"),
   getOne: (dishId) => apiFetch(`/favorites/${dishId}`),
   upsert: (body) => apiFetch("/favorites", { method: "POST", body: JSON.stringify(body) }),
   upsertRestaurant: (body) => apiFetch("/favorites/restaurants", { method: "POST", body: JSON.stringify(body) }),
   upsertHotel: (body) => apiFetch("/favorites/hotels", { method: "POST", body: JSON.stringify(body) }),
+  upsertExperience: (body) => apiFetch("/favorites/experiences", { method: "POST", body: JSON.stringify(body) }),
   extend: (dishId) => apiFetch(`/favorites/${dishId}/extend`, { method: "PATCH" }),
   deleteOne: (dishId) => apiFetch(`/favorites/${dishId}`, { method: "DELETE" }),
   deleteRestaurant: (restaurantId) => apiFetch(`/favorites/restaurants/${restaurantId}`, { method: "DELETE" }),
   deleteHotel: (hotelKey) => apiFetch(`/favorites/hotels/${encodeURIComponent(hotelKey)}`, { method: "DELETE" }),
+  deleteExperience: (experienceId) => apiFetch(`/favorites/experiences/${experienceId}`, { method: "DELETE" }),
   clear: () => apiFetch("/favorites", { method: "DELETE" }),
   clearRestaurants: () => apiFetch("/favorites/restaurants", { method: "DELETE" }),
   clearHotels: () => apiFetch("/favorites/hotels", { method: "DELETE" }),
+  clearExperiences: () => apiFetch("/favorites/experiences", { method: "DELETE" }),
 };

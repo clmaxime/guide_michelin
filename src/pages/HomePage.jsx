@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import FeaturedHotelsSection from "../sections/FeaturedHotelsSection";
+import FeaturedExperiencesSection from "../sections/FeaturedExperiencesSection";
 import FeaturedRestaurantsSection from "../sections/FeaturedRestaurantsSection";
 import FooterSection from "../sections/FooterSection";
 import HeaderSection from "../sections/HeaderSection";
@@ -25,6 +26,7 @@ function HomePage() {
       <HeaderSection />
       <main>
         <HeroSection />
+        <FeaturedExperiencesSection />
         <FeaturedRestaurantsSection />
         <FeaturedHotelsSection />
         <TinderTeaserSection />

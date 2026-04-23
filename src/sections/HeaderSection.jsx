@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -8,23 +8,16 @@ import { AuthModal } from "@/components/auth/AuthModal";
 import { UserMenu } from "@/components/auth/UserMenu";
 
 const navLinks = [
-  { label: "Restaurants", href: "/restaurants" },
-  { label: "Hôtels", href: "/hotels" },
-  { label: "Itinéraire", href: "/itinerary" },
+  { label: "Restaurants", to: "/restaurants" },
+  { label: "Hôtels", to: "/hotels" },
+  { label: "Expériences", to: "/experiences" },
+  { label: "Inspiration", to: "/discover" },
 ];
 
-function HeaderSection() {
+export default function HeaderSection() {
   const scrolled = useUiStore((state) => state.scrolled);
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthStore((state) => state.user);
   const [showAuth, setShowAuth] = useState(false);
-
-  const navLinks = [
-    { label: "Restaurants", to: "/restaurants" },
-    { label: "Hôtels", to: "/hotels" },
-    { label: "Inspiration", to: "/discover" },
-    { label: "Destinations", to: "/" },
-  ];
-
   const textColor = "text-white";
 
   return (
@@ -43,12 +36,7 @@ function HeaderSection() {
 
           <nav aria-label="Navigation principale" className="hidden gap-5 md:flex">
             {navLinks.map((item) => (
-              <Link
-                className={`text-[0.95rem] font-semibold ${textColor}`}
-                to={item.href}
-                key={item.label}
-                to={item.to}
-              >
+              <Link className={`text-[0.95rem] font-semibold ${textColor}`} key={item.label} to={item.to}>
                 {item.label}
               </Link>
             ))}
@@ -102,5 +90,3 @@ function HeaderSection() {
     </>
   );
 }
-
-export default HeaderSection;

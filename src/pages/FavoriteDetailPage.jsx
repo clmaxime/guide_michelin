@@ -50,7 +50,7 @@ function formatDate(value) {
   });
 }
 
-function FavoriteDetailPage() {
+export default function FavoriteDetailPage() {
   const user = useAuthStore((state) => state.user);
   const loading = useAuthStore((state) => state.loading);
   const navigate = useNavigate();
@@ -67,9 +67,7 @@ function FavoriteDetailPage() {
   }, [setScrolled]);
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/");
-    }
+    if (!loading && !user) navigate("/");
   }, [loading, navigate, user]);
 
   useEffect(() => {
@@ -105,19 +103,13 @@ function FavoriteDetailPage() {
           return;
         }
 
-        const byName = restaurants.find(
-          (item) => normalize(item.nom) === normalize(favorite.restaurantName),
-        );
-
+        const byName = restaurants.find((item) => normalize(item.nom) === normalize(favorite.restaurantName));
         if (byName) {
           setMatchedRestaurant(byName);
           return;
         }
 
-        const byAddress = restaurants.find((item) =>
-          normalize(item.adresse).includes(normalize(favorite.restaurantAddress)),
-        );
-
+        const byAddress = restaurants.find((item) => normalize(item.adresse).includes(normalize(favorite.restaurantAddress)));
         setMatchedRestaurant(byAddress ?? restaurants[0]);
       })
       .catch(() => setMatchedRestaurant(null));
@@ -155,10 +147,7 @@ function FavoriteDetailPage() {
             Retour aux favoris
           </Link>
 
-          {message && !favorite ? (
-            <div className="rounded-2xl border border-white/12 bg-white/[0.05] p-5 text-sm text-white/75">{message}</div>
-          ) : null}
-
+          {message && !favorite ? <div className="rounded-2xl border border-white/12 bg-white/[0.05] p-5 text-sm text-white/75">{message}</div> : null}
           {!message && !favorite ? <p className="text-sm text-white/65">Chargement de la fiche...</p> : null}
 
           {favorite ? (
@@ -166,9 +155,7 @@ function FavoriteDetailPage() {
               <div className="relative">
                 <img alt={favorite.dishTitle} className="h-[300px] w-full object-cover md:h-[360px]" src={favorite.dishImage} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-                <p className="absolute left-5 top-5 rounded-full border border-white/35 bg-black/45 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.09em] text-white">
-                  {favorite.dishCuisine}
-                </p>
+                <p className="absolute left-5 top-5 rounded-full border border-white/35 bg-black/45 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.09em] text-white">{favorite.dishCuisine}</p>
               </div>
 
               <div className="grid gap-6 p-5 md:p-8 lg:grid-cols-[1.25fr_0.95fr]">
@@ -243,10 +230,7 @@ function FavoriteDetailPage() {
                     </p>
 
                     {restaurantRouteId ? (
-                      <Link
-                        className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-sm font-semibold text-white transition hover:bg-primary/85"
-                        to={`/restaurants/${restaurantRouteId}`}
-                      >
+                      <Link className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-sm font-semibold text-white transition hover:bg-primary/85" to={`/restaurants/${restaurantRouteId}`}>
                         Voir la fiche restaurant
                         <ExternalLink className="size-3.5" />
                       </Link>
@@ -282,5 +266,3 @@ function FavoriteDetailPage() {
     </>
   );
 }
-
-export default FavoriteDetailPage;

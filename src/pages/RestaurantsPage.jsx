@@ -3,22 +3,14 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Heart, Locate, MapPin, Search, Star, X } from "lucide-react";
 import { MichelinStars } from "@/components/MichelinStars";
 import michelinStarUrl from "@/assets/michelin-star.svg";
-import { restaurantApi } from "@/lib/api";
+import { restaurantApi, favoritesApi } from "@/lib/api";
+import { useUiStore } from "@/store/ui-store";
+import { useAuthStore } from "@/store/auth-store";
 import HeaderSection from "@/sections/HeaderSection";
 
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
 const RANGES = [5, 10, 20, 50];
 
-function MichelinStars({ count, size = "sm" }) {
-  const cls = size === "sm" ? "size-3" : "size-3.5";
-  return (
-    <span className="flex items-center gap-0.5">
-      {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} className={`${cls} fill-primary text-primary`} />
-      ))}
-    </span>
-  );
-}
 
 function FilterBar({ filters, onChange }) {
   const [geoLoading, setGeoLoading] = useState(false);

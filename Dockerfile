@@ -8,6 +8,7 @@ RUN npm ci
 # Build-args pour les vars d'env injectées au build
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_MAPBOX_ACCESS_TOKEN=$VITE_MAPBOX_ACCESS_TOKEN
 
 COPY . .
 RUN npm run build

@@ -41,7 +41,7 @@ export default function FeaturedHotelsSection() {
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">Hôtels Michelin</p>
             <h2 className="font-title text-3xl text-white md:text-4xl">8 propositions d'hôtels au hasard</h2>
             <p className="mt-2 max-w-[42rem] text-sm text-white/55">
-              Une sélection visuelle d'adresses extraites de `guide.michelin.com/fr/fr/hotels`.
+              Une sélection visuelle d'adresses issues du Guide Michelin.
             </p>
           </div>
         </div>

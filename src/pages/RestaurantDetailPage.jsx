@@ -52,7 +52,7 @@ function HorairesCard({ horaires }) {
         <h3 className="font-title text-lg font-semibold">Horaires</h3>
       </div>
       {sorted.length === 0 ? (
-        <p className="text-sm text-white/40">Non renseignÃ©s</p>
+        <p className="text-sm text-white/40">Non renseignés</p>
       ) : (
         <ul className="space-y-2">
           {sorted.map((h) => (
@@ -240,7 +240,7 @@ export default function RestaurantDetailPage() {
             </div>
             <div className="mt-8 flex select-none items-center gap-2 text-xs text-white/30">
               <ChevronRight className="size-3 rotate-90" />
-              DÃ©couvrir
+              Découvrir
             </div>
           </div>
         </div>
@@ -280,8 +280,8 @@ export default function RestaurantDetailPage() {
               <div className="mb-4 flex items-end justify-between gap-3">
                 <div>
                   <p className="mb-1 text-xs font-semibold uppercase tracking-[0.1em] text-primary">Suggestions</p>
-                  <h2 className="font-title text-3xl text-white">Exp&eacute;riences autour du restaurant</h2>
-                  <p className="mt-1 text-sm text-white/55">Affich&eacute;es dans un rayon maximum de 20 km.</p>
+                  <h2 className="font-title text-3xl text-white">Expériences autour du restaurant</h2>
+                  <p className="mt-1 text-sm text-white/55">Affichées dans un rayon maximum de 20 km.</p>
                 </div>
                 <Link
                   className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/20"
@@ -300,7 +300,7 @@ export default function RestaurantDetailPage() {
           <div className="mt-10 flex justify-center">
             <GlassButton to="/">
               <ArrowLeft className="size-4" />
-              Retour Ã  l'accueil
+              Retour à l'accueil
             </GlassButton>
           </div>
         </div>

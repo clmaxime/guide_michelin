@@ -17,6 +17,7 @@ import { favoritesApi } from "@/lib/api";
 import { useAuthStore } from "@/store/auth-store";
 import { useUiStore } from "@/store/ui-store";
 import { useDishTinderStore } from "@/features/dish-tinder/store/dish-tinder-store";
+import { formatExperiencePrice } from "@/components/experiences/ExperienceCard";
 
 function formatCountdown(msLeft) {
   const totalSec = Math.max(0, Math.floor(msLeft / 1000));
@@ -41,6 +42,10 @@ function TabButton({ active, icon: Icon, label, count, onClick }) {
       <span className="rounded-full bg-black/25 px-2 py-0.5 text-xs">{count}</span>
     </button>
   );
+}
+
+function getExperienceTargetId(favorite) {
+  return favorite.experienceId ?? favorite.experienceI ?? favorite.id;
 }
 
 export default function FavoritesPage() {
@@ -74,10 +79,11 @@ export default function FavoritesPage() {
         favoritesApi.listHotels(),
         favoritesApi.listExperiences(),
       ]);
-      setDishFavorites(dishes);
-      setRestaurantFavorites(restaurants);
-      setHotelFavorites(hotels);
-      setExperienceFavorites(experiences);
+
+      setDishFavorites(Array.isArray(dishes) ? dishes : []);
+      setRestaurantFavorites(Array.isArray(restaurants) ? restaurants : []);
+      setHotelFavorites(Array.isArray(hotels) ? hotels : []);
+      setExperienceFavorites(Array.isArray(experiences) ? experiences : []);
       setMessage("");
     } catch {
       setMessage("Impossible de charger les favoris.");
@@ -105,7 +111,6 @@ export default function FavoritesPage() {
       if (activeTab === "dishes") {
         await favoritesApi.clear();
         setDishFavorites([]);
-        // Reset Tinder session and redirect to Discover page
         const resetSession = useDishTinderStore.getState().resetSession;
         resetSession();
         navigate("/discover", { replace: true });
@@ -113,12 +118,13 @@ export default function FavoritesPage() {
         await favoritesApi.clearRestaurants();
         setRestaurantFavorites([]);
         setMessage("Catégorie réinitialisée.");
-      } else {
+      } else if (activeTab === "hotels") {
         await favoritesApi.clearHotels();
         setHotelFavorites([]);
         setMessage("Catégorie réinitialisée.");
-      }
-      if (activeTab !== "dishes") {
+      } else {
+        await favoritesApi.clearExperiences();
+        setExperienceFavorites([]);
         setMessage("Catégorie réinitialisée.");
       }
     } catch {
@@ -162,7 +168,7 @@ export default function FavoritesPage() {
     setBusy(`experience:${experienceId}`);
     try {
       await favoritesApi.deleteExperience(experienceId);
-      setExperienceFavorites((prev) => prev.filter((item) => item.experienceId !== experienceId));
+      setExperienceFavorites((prev) => prev.filter((item) => getExperienceTargetId(item) !== experienceId));
     } finally {
       setBusy("");
     }
@@ -344,36 +350,39 @@ export default function FavoritesPage() {
 
           {activeTab === "experiences" && (
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {experienceFavorites.map((favorite) => (
-                <article
-                  className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] backdrop-blur-md"
-                  key={favorite.id}
-                >
-                  <img alt={favorite.experienceTitle} className="h-48 w-full object-cover" src={favorite.experienceImage} />
-                  <div className="space-y-3 p-5">
-                    <h2 className="font-title text-2xl text-white">{favorite.experienceTitle}</h2>
-                    <p className="text-sm text-white/65">{favorite.experienceCity}</p>
-                    <p className="text-sm font-semibold text-white/85">{formatExperiencePrice(favorite.experiencePrice)}</p>
-                    <div className="flex flex-wrap gap-2">
-                      <Link
-                        className="inline-flex h-10 items-center rounded-xl bg-primary px-3.5 text-sm font-semibold text-white"
-                        to={`/experiences/${favorite.experienceId}`}
-                      >
-                        Consulter
-                      </Link>
-                      <Button
-                        className="h-10 rounded-xl border-white/20 text-white hover:bg-white/15"
-                        disabled={busy === `experience:${favorite.experienceId}`}
-                        onClick={() => removeExperience(favorite.experienceId)}
-                        type="button"
-                        variant="outline"
-                      >
-                        Retirer
-                      </Button>
+              {experienceFavorites.map((favorite) => {
+                const targetExperienceId = getExperienceTargetId(favorite);
+                return (
+                  <article
+                    className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] backdrop-blur-md"
+                    key={favorite.id}
+                  >
+                    <img alt={favorite.experienceTitle} className="h-48 w-full object-cover" src={favorite.experienceImage} />
+                    <div className="space-y-3 p-5">
+                      <h2 className="font-title text-2xl text-white">{favorite.experienceTitle}</h2>
+                      <p className="text-sm text-white/65">{favorite.experienceCity}</p>
+                      <p className="text-sm font-semibold text-white/85">{formatExperiencePrice(favorite.experiencePrice)}</p>
+                      <div className="flex flex-wrap gap-2">
+                        <Link
+                          className="inline-flex h-10 items-center rounded-xl bg-primary px-3.5 text-sm font-semibold text-white"
+                          to={`/experiences/${targetExperienceId}`}
+                        >
+                          Consulter
+                        </Link>
+                        <Button
+                          className="h-10 rounded-xl border-white/20 text-white hover:bg-white/15"
+                          disabled={busy === `experience:${targetExperienceId}`}
+                          onClick={() => removeExperience(targetExperienceId)}
+                          type="button"
+                          variant="outline"
+                        >
+                          Retirer
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           )}
 
@@ -383,16 +392,19 @@ export default function FavoritesPage() {
               Aucun favori dans cette catégorie.
             </div>
           ) : null}
+
           {activeTab === "restaurants" && restaurantFavorites.length === 0 ? (
             <div className="mt-6 rounded-2xl border border-white/12 bg-white/[0.06] p-6 text-center text-white/70">
               Aucun restaurant favori.
             </div>
           ) : null}
+
           {activeTab === "hotels" && hotelFavorites.length === 0 ? (
             <div className="mt-6 rounded-2xl border border-white/12 bg-white/[0.06] p-6 text-center text-white/70">
               Aucun hôtel favori.
             </div>
           ) : null}
+
           {activeTab === "experiences" && experienceFavorites.length === 0 ? (
             <div className="mt-6 rounded-2xl border border-white/12 bg-white/[0.06] p-6 text-center text-white/70">
               Aucune expérience favorite.

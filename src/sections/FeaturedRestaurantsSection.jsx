@@ -14,12 +14,12 @@ function RestaurantCard({ restaurant }) {
 
   return (
     <Link to={`/restaurants/${restaurant.id}`} className="group relative flex aspect-[3/4] overflow-hidden rounded-2xl">
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
       <RestaurantImage
         imageUrls={restaurant.imageUrls}
         alt={restaurant.nom}
         className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 

@@ -154,12 +154,12 @@ function RestaurantCard({ restaurant, isFavorite, onToggleFavorite }) {
 
   return (
     <Link className="group relative flex aspect-[3/4] overflow-hidden rounded-2xl" to={`/restaurants/${restaurant.id}`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
       <RestaurantImage
         alt={restaurant.nom}
         className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
         imageUrls={restaurant.imageUrls}
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 

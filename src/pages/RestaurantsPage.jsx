@@ -7,6 +7,7 @@ import { restaurantApi, favoritesApi } from "@/lib/api";
 import { useUiStore } from "@/store/ui-store";
 import { useAuthStore } from "@/store/auth-store";
 import HeaderSection from "@/sections/HeaderSection";
+import RestaurantImage from "@/components/RestaurantImage";
 
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
 const RANGES = [5, 10, 20, 50];
@@ -147,22 +148,18 @@ function FilterBar({ filters, onChange }) {
 }
 
 function RestaurantCard({ restaurant, isFavorite, onToggleFavorite }) {
-  const image = restaurant.imageUrls?.[0];
   const todayIndex = new Date().getDay();
   const todayKey = DAY_ORDER[todayIndex === 0 ? 6 : todayIndex - 1];
   const todayHoraire = restaurant.horaires?.find((h) => h.jour === todayKey);
 
   return (
     <Link className="group relative flex aspect-[3/4] overflow-hidden rounded-2xl" to={`/restaurants/${restaurant.id}`}>
-      {image ? (
-        <img
-          alt={restaurant.nom}
-          className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
-          src={image}
-        />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
-      )}
+      <RestaurantImage
+        alt={restaurant.nom}
+        className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+        imageUrls={restaurant.imageUrls}
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
@@ -367,3 +364,4 @@ export default function RestaurantsPage() {
     </>
   );
 }
+

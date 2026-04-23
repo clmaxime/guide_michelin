@@ -1,24 +1,25 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, ArrowRight, Search } from "lucide-react";
 import { MichelinStars } from "@/components/MichelinStars";
+import RestaurantImage from "@/components/RestaurantImage";
 import { useRestaurantStore } from "@/store/restaurant-store";
 
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
 
 function RestaurantCard({ restaurant }) {
-  const image = restaurant.imageUrls?.[0];
   const todayIndex = new Date().getDay();
   const todayKey = DAY_ORDER[todayIndex === 0 ? 6 : todayIndex - 1];
   const todayHoraire = restaurant.horaires?.find((h) => h.jour === todayKey);
 
   return (
     <Link to={`/restaurants/${restaurant.id}`} className="group relative flex aspect-[3/4] overflow-hidden rounded-2xl">
-      {image ? (
-        <img src={image} alt={restaurant.nom} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
-      )}
+      <RestaurantImage
+        imageUrls={restaurant.imageUrls}
+        alt={restaurant.nom}
+        className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
@@ -86,3 +87,4 @@ export default function FeaturedRestaurantsSection() {
     </section>
   );
 }
+

@@ -28,7 +28,6 @@ function DishCard({ dish }) {
             </span>
           ))}
         </div>
-        <p className="text-xs font-medium uppercase tracking-[0.08em] text-[#ffc4ce]">Préparation estimée: {dish.prepTime} min</p>
       </div>
     </article>
   );

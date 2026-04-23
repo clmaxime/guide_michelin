@@ -1,14 +1,15 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
-import { favoritesApi } from "@/lib/api";
+import { favoritesApi, experiencesApi } from "@/lib/api";
 import { useAuthStore } from "@/store/auth-store";
 import { michelinHotels } from "@/data/michelin-hotels";
 import HeaderSection from "@/sections/HeaderSection";
 import FooterSection from "@/sections/FooterSection";
 import { useUiStore } from "@/store/ui-store";
+import ExperienceCard from "@/components/experiences/ExperienceCard";
 
 function formatLocation(slug) {
   if (!slug) return "Destination Michelin";
@@ -30,11 +31,12 @@ function buildHotelKey(hotel) {
   return `${hotel.locationSlug ?? "hotel"}_${hotel.name}`.toLowerCase().replace(/[^a-z0-9]+/g, "_");
 }
 
-function HotelsPage() {
+export default function HotelsPage() {
   const setScrolled = useUiStore((state) => state.setScrolled);
   const user = useAuthStore((state) => state.user);
   const [favoriteKeys, setFavoriteKeys] = useState(new Set());
   const [message, setMessage] = useState("");
+  const [experienceItems, setExperienceItems] = useState([]);
 
   useEffect(() => {
     setScrolled(true);
@@ -50,6 +52,13 @@ function HotelsPage() {
       .then((items) => setFavoriteKeys(new Set(items.map((item) => item.hotelKey))))
       .catch(() => setFavoriteKeys(new Set()));
   }, [user]);
+
+  useEffect(() => {
+    experiencesApi
+      .highlights(4)
+      .then((data) => setExperienceItems(Array.isArray(data) ? data : []))
+      .catch(() => setExperienceItems([]));
+  }, []);
 
   async function toggleHotelFavorite(hotel) {
     if (!user) {
@@ -96,7 +105,12 @@ function HotelsPage() {
                 Une sélection premium inspirée du Guide Michelin, dans une ambiance sombre cohérente avec le reste du site.
               </p>
             </div>
-            <Link className={buttonVariants({ className: "rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm text-white hover:bg-white/20" })} to="/">
+            <Link
+              className={buttonVariants({
+                className: "rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm text-white hover:bg-white/20",
+              })}
+              to="/"
+            >
               Retour à l'accueil
             </Link>
           </header>
@@ -108,12 +122,17 @@ function HotelsPage() {
               const hotelKey = buildHotelKey(hotel);
               const isFavorite = favoriteKeys.has(hotelKey);
               return (
-                <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.05] shadow-[0_16px_36px_rgba(0,0,0,0.35)]" key={hotel.url}>
+                <Card
+                  className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.05] shadow-[0_16px_36px_rgba(0,0,0,0.35)]"
+                  key={hotel.url}
+                >
                   <div className="relative">
                     <img alt={hotel.name} className="h-52 w-full object-cover" loading="lazy" src={hotel.image} />
                     <button
                       className={`absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full border transition ${
-                        isFavorite ? "border-primary bg-primary text-white" : "border-white/30 bg-black/40 text-white hover:bg-black/60"
+                        isFavorite
+                          ? "border-primary bg-primary text-white"
+                          : "border-white/30 bg-black/40 text-white hover:bg-black/60"
                       }`}
                       onClick={() => toggleHotelFavorite(hotel)}
                       type="button"
@@ -124,7 +143,12 @@ function HotelsPage() {
                   <CardContent className="space-y-2 p-4 pt-4">
                     <CardTitle className="mb-1 text-[1.15rem] text-white">{hotel.name}</CardTitle>
                     <p className="text-sm text-white/60">{formatLocation(hotel.locationSlug)}</p>
-                    <a className="text-sm font-semibold text-primary hover:underline" href={hotel.url} rel="noopener noreferrer" target="_blank">
+                    <a
+                      className="text-sm font-semibold text-primary hover:underline"
+                      href={hotel.url}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
                       Voir la fiche Michelin
                     </a>
                   </CardContent>
@@ -132,11 +156,35 @@ function HotelsPage() {
               );
             })}
           </div>
+
+          {experienceItems.length > 0 ? (
+            <section className="mt-12">
+              <div className="mb-5 flex items-end justify-between gap-3">
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-primary">À proximité</p>
+                  <h2 className="font-title text-3xl text-white">Expériences à réserver</h2>
+                  <p className="mt-1 text-white/55">Des activités premium pour compléter votre séjour.</p>
+                </div>
+                <Link
+                  className={buttonVariants({
+                    className:
+                      "rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20",
+                  })}
+                  to="/experiences"
+                >
+                  Toutes les expériences
+                </Link>
+              </div>
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+                {experienceItems.map((item) => (
+                  <ExperienceCard compact experience={item} key={item.id} />
+                ))}
+              </div>
+            </section>
+          ) : null}
         </section>
       </main>
       <FooterSection />
     </>
   );
 }
-
-export default HotelsPage;

@@ -2,10 +2,11 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, MapPin, Clock, ChevronRight, ExternalLink } from "lucide-react";
 import { MichelinStars, MICHELIN_LABELS } from "@/components/MichelinStars";
-import { restaurantApi } from "@/lib/api";
+import { experiencesApi, restaurantApi } from "@/lib/api";
 import { MAPBOX_ACCESS_TOKEN } from "@/lib/mapbox";
 import { useUiStore } from "@/store/ui-store";
 import HeaderSection from "@/sections/HeaderSection";
+import ExperienceCard from "@/components/experiences/ExperienceCard";
 
 const DAY_ORDER = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
 const DAY_LABELS = {
@@ -26,9 +27,17 @@ function GlassButton({ to, onClick, children, className = "" }) {
   const base =
     "inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition hover:bg-white/20 active:scale-95";
   if (to) {
-    return <Link to={to} className={`${base} ${className}`}>{children}</Link>;
+    return (
+      <Link to={to} className={`${base} ${className}`}>
+        {children}
+      </Link>
+    );
   }
-  return <button onClick={onClick} className={`${base} ${className}`} type="button">{children}</button>;
+  return (
+    <button onClick={onClick} className={`${base} ${className}`} type="button">
+      {children}
+    </button>
+  );
 }
 
 function HorairesCard({ horaires }) {
@@ -43,18 +52,27 @@ function HorairesCard({ horaires }) {
         <h3 className="font-title text-lg font-semibold">Horaires</h3>
       </div>
       {sorted.length === 0 ? (
-        <p className="text-sm text-white/40">Non renseignés</p>
+        <p className="text-sm text-white/40">Non renseignÃ©s</p>
       ) : (
         <ul className="space-y-2">
           {sorted.map((h) => (
-            <li key={h.jour} className={`flex items-start justify-between gap-4 rounded-lg px-3 py-2 text-sm ${h.jour === todayKey ? "bg-white/10 ring-1 ring-white/20" : ""}`}>
+            <li
+              key={h.jour}
+              className={`flex items-start justify-between gap-4 rounded-lg px-3 py-2 text-sm ${
+                h.jour === todayKey ? "bg-white/10 ring-1 ring-white/20" : ""
+              }`}
+            >
               <span className={`w-24 shrink-0 font-medium ${h.jour === todayKey ? "text-primary" : "text-white/70"}`}>
                 {DAY_LABELS[h.jour]}
-                {h.jour === todayKey ? <span className="ml-1.5 text-[10px] font-semibold uppercase tracking-wider text-primary">Auj.</span> : null}
+                {h.jour === todayKey ? (
+                  <span className="ml-1.5 text-[10px] font-semibold uppercase tracking-wider text-primary">Auj.</span>
+                ) : null}
               </span>
               <div className="flex flex-col items-end gap-0.5">
                 {h.creneaux.map((c, i) => (
-                  <span key={i} className="tabular-nums text-white/90">{c.ouverture} - {c.fermeture}</span>
+                  <span key={i} className="tabular-nums text-white/90">
+                    {c.ouverture} - {c.fermeture}
+                  </span>
                 ))}
               </div>
             </li>
@@ -120,7 +138,12 @@ function MapCard({ restaurant }) {
           <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
           <p className="text-sm leading-snug text-white/70">{adresse}</p>
         </div>
-        <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="ml-4 flex shrink-0 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 backdrop-blur-md transition hover:bg-white/20">
+        <a
+          href={googleMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-4 flex shrink-0 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 backdrop-blur-md transition hover:bg-white/20"
+        >
           Ouvrir
           <ExternalLink className="size-3" />
         </a>
@@ -145,11 +168,12 @@ function Gallery({ images }) {
   );
 }
 
-function RestaurantDetailPage() {
+export default function RestaurantDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const setScrolled = useUiStore((s) => s.setScrolled);
+  const setScrolled = useUiStore((state) => state.setScrolled);
   const [restaurant, setRestaurant] = useState(null);
+  const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -164,6 +188,18 @@ function RestaurantDetailPage() {
       .catch(() => navigate("/", { replace: true }))
       .finally(() => setLoading(false));
   }, [id, navigate]);
+
+  useEffect(() => {
+    if (!restaurant?.latitude || !restaurant?.longitude) {
+      setExperiences([]);
+      return;
+    }
+
+    experiencesApi
+      .list({ lat: restaurant.latitude, lng: restaurant.longitude, range: 20, limit: 8 })
+      .then((data) => setExperiences(Array.isArray(data) ? data : []))
+      .catch(() => setExperiences([]));
+  }, [restaurant]);
 
   if (loading) {
     return (
@@ -180,11 +216,18 @@ function RestaurantDetailPage() {
     <>
       <HeaderSection />
       <section className="relative h-screen min-h-[600px] overflow-hidden">
-        {heroImage ? <img src={heroImage} alt={restaurant.nom} className="absolute inset-0 h-full w-full object-cover" /> : <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-neutral-950" />}
+        {heroImage ? (
+          <img src={heroImage} alt={restaurant.nom} className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-neutral-950" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
         <div className="absolute left-6 top-24 z-10">
-          <GlassButton to="/restaurants"><ArrowLeft className="size-4" />Retour</GlassButton>
+          <GlassButton to="/restaurants">
+            <ArrowLeft className="size-4" />
+            Retour
+          </GlassButton>
         </div>
         <div className="absolute bottom-0 left-0 right-0 z-10">
           <div className="mx-auto max-w-[1220px] px-6 pb-14 md:px-10">
@@ -197,7 +240,7 @@ function RestaurantDetailPage() {
             </div>
             <div className="mt-8 flex select-none items-center gap-2 text-xs text-white/30">
               <ChevronRight className="size-3 rotate-90" />
-              Découvrir
+              DÃ©couvrir
             </div>
           </div>
         </div>
@@ -205,7 +248,16 @@ function RestaurantDetailPage() {
 
       <section className="relative overflow-hidden">
         {heroImage ? (
-          <div className="absolute inset-0" style={{ backgroundImage: `url(${heroImage})`, backgroundSize: "cover", backgroundPosition: "center", filter: "blur(48px) brightness(0.18) saturate(1.4)", transform: "scale(1.15)" }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url(${heroImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(48px) brightness(0.18) saturate(1.4)",
+              transform: "scale(1.15)",
+            }}
+          />
         ) : (
           <div className="absolute inset-0 bg-[#0a0a0a]" />
         )}
@@ -215,10 +267,41 @@ function RestaurantDetailPage() {
             <InfoCard restaurant={restaurant} />
             <HorairesCard horaires={restaurant.horaires} />
           </div>
-          <div className="mt-5"><MapCard restaurant={restaurant} /></div>
-          {restaurant.imageUrls?.length > 1 ? <div className="mt-5"><Gallery images={restaurant.imageUrls} /></div> : null}
+          <div className="mt-5">
+            <MapCard restaurant={restaurant} />
+          </div>
+          {restaurant.imageUrls?.length > 1 ? (
+            <div className="mt-5">
+              <Gallery images={restaurant.imageUrls} />
+            </div>
+          ) : null}
+          {experiences.length > 0 ? (
+            <div className="mt-5 rounded-2xl border border-white/15 bg-white/[0.08] p-6 backdrop-blur-xl">
+              <div className="mb-4 flex items-end justify-between gap-3">
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-[0.1em] text-primary">Suggestions</p>
+                  <h2 className="font-title text-3xl text-white">Exp&eacute;riences autour du restaurant</h2>
+                  <p className="mt-1 text-sm text-white/55">Affich&eacute;es dans un rayon maximum de 20 km.</p>
+                </div>
+                <Link
+                  className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/20"
+                  to="/experiences"
+                >
+                  Voir tout
+                </Link>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {experiences.map((experience) => (
+                  <ExperienceCard compact experience={experience} key={experience.id} />
+                ))}
+              </div>
+            </div>
+          ) : null}
           <div className="mt-10 flex justify-center">
-            <GlassButton to="/"><ArrowLeft className="size-4" />Retour à l'accueil</GlassButton>
+            <GlassButton to="/">
+              <ArrowLeft className="size-4" />
+              Retour Ã  l'accueil
+            </GlassButton>
           </div>
         </div>
       </section>
@@ -226,4 +309,3 @@ function RestaurantDetailPage() {
   );
 }
 
-export default RestaurantDetailPage;

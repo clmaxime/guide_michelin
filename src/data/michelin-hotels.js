@@ -1,4 +1,4 @@
-﻿export const michelinHotels = [
+export const michelinHotels = [
     {
         "name":  "The Twenty Two",
         "locationSlug":  "london",

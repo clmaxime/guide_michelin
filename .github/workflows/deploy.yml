@@ -33,7 +33,7 @@ jobs:
           push: true
           build-args: |
             VITE_API_URL=https://back.air-renov.xyz
-            VITE_MAPBOX_ACCESS_TOKEN=VITE_MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoibWFrZXJzb3VsIiwiYSI6ImNsbHhtd3V1dzBlMjYzcnAzNmVhdDRidjIifQ.Z4UswRfpsjf5pXByC4DN4A
+            VITE_MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoibWFrZXJzb3VsIiwiYSI6ImNsbHhtd3V1dzBlMjYzcnAzNmVhdDRidjIifQ.Z4UswRfpsjf5pXByC4DN4A
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

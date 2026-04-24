@@ -1,0 +1,6 @@
+services:
+  frontend:
+    image: ghcr.io/clmaxime/guide_michelin:latest
+    ports:
+      - "80:80"
+    restart: unless-stopped

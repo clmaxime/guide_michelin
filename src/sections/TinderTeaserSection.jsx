@@ -31,7 +31,7 @@ function TinderTeaserSection() {
                 })}
                 to="/discover"
               >
-                Aller au Tinder des repas
+                Aller au mode Inspiration
                 <ArrowUpRight className="size-4" />
               </Link>
             </div>

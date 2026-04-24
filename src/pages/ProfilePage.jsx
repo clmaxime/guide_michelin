@@ -116,7 +116,7 @@ function ProfilePage() {
           <form className="rounded-2xl border border-white/12 bg-white/[0.06] p-6 shadow-sm backdrop-blur-md" onSubmit={handleSubmit}>
             <h2 className="mb-1 font-title text-2xl text-white">Préférences alimentaires</h2>
             <p className="mb-5 text-sm text-white/60">
-              Ces paramètres sont enregistrés sur ton compte et utilisés automatiquement dans le mode Tinder.
+              Ces paramètres sont enregistrés sur ton compte et utilisés automatiquement dans le mode Inspiration.
             </p>
 
             <label className="mb-4 flex items-center gap-2 text-sm font-medium text-white">

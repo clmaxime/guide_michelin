@@ -19,7 +19,7 @@ function buildFavoritePayload(dish) {
     dishCuisine: dish.cuisine,
     dishCaption: dish.caption,
     restaurantId: dish.restaurantId ?? null,
-    restaurantName: dish.restaurantName ?? "Selection Tinder Michelin",
+    restaurantName: dish.restaurantName ?? "Sélection Inspiration Michelin",
     restaurantAddress: dish.restaurantAddress ?? "Adresse a confirmer",
     restaurantHours: dish.restaurantHours ?? "",
     restaurantPhone: dish.restaurantPhone ?? "",
@@ -168,7 +168,7 @@ function DiscoverPage() {
         <div className="mx-auto w-full max-w-[1220px] px-4 md:px-7">
           <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="font-title text-[2rem] leading-tight text-white md:text-[2.7rem]">Mode Tinder - Decouverte repas</h1>
+              <h1 className="font-title text-[2rem] leading-tight text-white md:text-[2.7rem]">Mode Inspiration - Découverte repas</h1>
               <p className="mt-2 max-w-[42rem] text-sm text-white/75">
                 Swipe avec le doigt sur mobile, ou utilise les boutons et les fleches du clavier sur desktop.
               </p>
